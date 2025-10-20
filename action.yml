@@ -1,6 +1,24 @@
 name: 'Create an ephemeral environment in Octopus Deploy'
 description: 'GitHub Action to create an ephemeral environment in Octopus Deploy'
 author: 'Octopus Deploy'
+branding:
+  color: 'blue'
+  icon: 'package'
 
-on:
-  workflow_dispatch:
+inputs:
+  environment_name:
+    description: 'The name of the ephemeral environment to create.'
+    required: true
+  project:
+    description: 'The id of the project to connect the environment to.'
+    required: true
+  space:
+    description: 'The name of a space within which this command will be executed. The space name is required, but you may also use the OCTOPUS_SPACE environment variable.'
+  server:
+    description: 'The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.'
+  api_key:
+    description: 'The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value be retrieved from a GitHub secret.'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
