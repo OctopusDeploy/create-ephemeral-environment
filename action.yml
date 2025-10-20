@@ -1,0 +1,6 @@
+name: 'Create an ephemeral environment in Octopus Deploy'
+description: 'GitHub Action to create an ephemeral environment in Octopus Deploy'
+author: 'Octopus Deploy'
+
+on:
+  workflow_dispatch:
