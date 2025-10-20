@@ -1,0 +1,3 @@
+name: Test create environment
+on:
+  workflow_dispatch:
