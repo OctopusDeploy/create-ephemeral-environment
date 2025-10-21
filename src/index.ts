@@ -1,5 +1,5 @@
 import { getInputParameters } from './input-parameters'
-import { debug, error, info, isDebug, setFailed, setOutput, warning } from '@actions/core'
+import { debug, error, info, isDebug, setFailed, warning } from '@actions/core'
 import { Client, ClientConfiguration, Logger } from '@octopusdeploy/api-client'
 
 // GitHub actions entrypoint
