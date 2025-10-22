@@ -28,9 +28,10 @@ import { writeFileSync } from 'fs'
     const parameters = getInputParameters()
 
     const config: ClientConfiguration = {
-      userAgentApp: 'GitHubActions create-ephemeral-environment-action',
+      userAgentApp: 'GitHubActions create-ephemeral-environment',
       instanceURL: parameters.server,
       apiKey: parameters.apiKey,
+      accessToken: parameters.accessToken,
       logging: logger
     }
 

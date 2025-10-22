@@ -6,6 +6,8 @@ on:
       server:
         type: string
         description: The url of the Octopus Instance. Will default to repository variable TEST_INSTANCE_URL if not supplied.
+      service_account_id:
+        description: The id of the service account when using OpenID Connect to login. Please supply either a service account id or an API key. Be careful this may be logged in plain text.
       api_key:
         type: string
         description: The API key to login with. Be careful this may be logged in plain text. Will default to repository secret TEST_INSTANCE_API_KEY if not supplied.

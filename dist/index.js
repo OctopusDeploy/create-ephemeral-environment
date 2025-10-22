@@ -67445,12 +67445,14 @@ const core_1 = __nccwpck_require__(7484);
 const EnvironmentVariables = {
     URL: 'OCTOPUS_URL',
     ApiKey: 'OCTOPUS_API_KEY',
+    AccessToken: 'OCTOPUS_ACCESS_TOKEN',
     Space: 'OCTOPUS_SPACE'
 };
 function getInputParameters() {
     const parameters = {
         server: (0, core_1.getInput)('server') || process.env[EnvironmentVariables.URL] || '',
         apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
+        accessToken: (0, core_1.getInput)('service_account_id') || process.env[EnvironmentVariables.AccessToken],
         space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
         name: (0, core_1.getInput)('name', { required: true }),
         project: (0, core_1.getInput)('project', { required: true }),
@@ -67459,8 +67461,8 @@ function getInputParameters() {
     if (!parameters.server) {
         errors.push("The Octopus instance URL is required, please specify explicitly through the 'server' input or set the OCTOPUS_URL environment variable.");
     }
-    if (!parameters.apiKey) {
-        errors.push("The Octopus API Key is required, please specify explicitly through the 'api_key' input or set the OCTOPUS_API_KEY environment variable.");
+    if (!parameters.apiKey && !parameters.accessToken) {
+        errors.push("The Octopus API Key is required or OIDC access token, please specify an API key through the 'api_key' input or OCTOPUS_API_KEY environment variable, or supply an OIDC access token through the 'service_account_id' input or OCTOPUS_ACCESS_TOKEN environment variable.");
     }
     if (!parameters.space) {
         errors.push("The Octopus space name is required, please specify explicitly through the 'space' input or set the OCTOPUS_SPACE environment variable.");
@@ -74443,9 +74445,10 @@ const fs_1 = __nccwpck_require__(9896);
         };
         const parameters = (0, input_parameters_1.getInputParameters)();
         const config = {
-            userAgentApp: 'GitHubActions create-ephemeral-environment-action',
+            userAgentApp: 'GitHubActions create-ephemeral-environment',
             instanceURL: parameters.server,
             apiKey: parameters.apiKey,
+            accessToken: parameters.accessToken,
             logging: logger
         };
         const client = await api_client_1.Client.create(config);
