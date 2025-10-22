@@ -1,0 +1,4 @@
+name: Test Create Ephemeral Environment with OIDC Login
+
+on:
+  workflow_dispatch:
