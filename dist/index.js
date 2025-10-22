@@ -67403,13 +67403,35 @@ function wrappy (fn, cb) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
+exports.GetProject = GetProject;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
-    const repository = new api_client_1.EnvironmentRepository(client, parameters.space);
-    const response = await repository.createEphemeralEnvironment(parameters.environment_name, parameters.project);
+    const project = await GetProject(client, parameters.project);
+    const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
+    const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id);
     client.info(`🎉 Ephemeral environment '${parameters.environment_name}' created successfully!`);
     return response.Id;
+}
+async function GetProject(client, projectNameOrId) {
+    const projectRepository = new api_client_1.ProjectRepository(client, "Default");
+    console.log(`Getting Project, "${projectNameOrId}"...`);
+    let project;
+    try {
+        console.log(await projectRepository.list()); // remove line // cc
+        project = (await projectRepository.list({ partialName: projectNameOrId })).Items[0];
+    }
+    catch (error) {
+        console.error(error);
+    }
+    if (project !== null && project !== undefined) {
+        console.log(`Project found: "${project?.Name}" (${project?.Id})`);
+        return project;
+    }
+    else {
+        console.error(`Project, "${projectNameOrId}" not found`);
+        throw new Error(`Project, "${projectNameOrId}" not found`);
+    }
 }
 //# sourceMappingURL=api-wrapper.js.map
 
