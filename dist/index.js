@@ -67434,48 +67434,6 @@ async function GetProjectByName(client, projectName, spaceName) {
 
 /***/ }),
 
-/***/ 1920:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getInputParameters = getInputParameters;
-const core_1 = __nccwpck_require__(7484);
-const EnvironmentVariables = {
-    URL: 'OCTOPUS_URL',
-    ApiKey: 'OCTOPUS_API_KEY',
-    AccessToken: 'OCTOPUS_ACCESS_TOKEN',
-    Space: 'OCTOPUS_SPACE'
-};
-function getInputParameters() {
-    const parameters = {
-        server: (0, core_1.getInput)('server') || process.env[EnvironmentVariables.URL] || '',
-        apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
-        accessToken: (0, core_1.getInput)('service_account_id') || process.env[EnvironmentVariables.AccessToken],
-        space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
-        name: (0, core_1.getInput)('name', { required: true }),
-        project: (0, core_1.getInput)('project', { required: true }),
-    };
-    const errors = [];
-    if (!parameters.server) {
-        errors.push("The Octopus instance URL is required, please specify explicitly through the 'server' input or set the OCTOPUS_URL environment variable.");
-    }
-    if (!parameters.apiKey && !parameters.accessToken) {
-        errors.push("The Octopus API Key is required or OIDC access token, please specify an API key through the 'api_key' input or OCTOPUS_API_KEY environment variable, or supply an OIDC access token through the 'service_account_id' input or OCTOPUS_ACCESS_TOKEN environment variable.");
-    }
-    if (!parameters.space) {
-        errors.push("The Octopus space name is required, please specify explicitly through the 'space' input or set the OCTOPUS_SPACE environment variable.");
-    }
-    if (errors.length > 0) {
-        throw new Error(errors.join('\n'));
-    }
-    return parameters;
-}
-//# sourceMappingURL=input-parameters.js.map
-
-/***/ }),
-
 /***/ 2613:
 /***/ ((module) => {
 
@@ -74418,7 +74376,6 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const input_parameters_1 = __nccwpck_require__(1920);
 const core_1 = __nccwpck_require__(7484);
 const api_client_1 = __nccwpck_require__(1212);
 // GitHub actions entrypoint
@@ -74443,7 +74400,14 @@ const fs_1 = __nccwpck_require__(9896);
                 }
             }
         };
-        const parameters = (0, input_parameters_1.getInputParameters)();
+        // const parameters = getInputParameters()
+        const parameters = {
+            server: 'https://team-github.testoctopus.app/',
+            apiKey: "API-JHFSPRFJORDC8UGZ6QB8HIS8WW0YJIO",
+            space: 'Caitlyn',
+            name: 'EE18',
+            project: 'EE TESTING'
+        };
         const config = {
             userAgentApp: 'GitHubActions create-ephemeral-environment',
             instanceURL: parameters.server,

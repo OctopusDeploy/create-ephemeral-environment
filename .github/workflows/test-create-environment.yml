@@ -1,4 +1,4 @@
-name: Test create environment
+name: Test Create Ephemeral Environment
 
 on:
   workflow_dispatch:
@@ -22,7 +22,6 @@ on:
 jobs:
   login:
     permissions:
-      id-token: write # This is required for requesting the JWT
       contents: read # This is required for actions/checkout
     runs-on: ubuntu-latest
     name: Test Ephemeral Environment Creation
@@ -40,6 +39,3 @@ jobs:
           name: ${{ inputs.name }}
           project: ${{ inputs.project }}
           space: ${{ inputs.space }}
-        ## temp remove me!!! // cc
-        env:
-          OCTOPUS_ACCESS_TOKEN: ${{ secrets.OIDC }}
