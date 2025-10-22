@@ -37,7 +37,6 @@ jobs:
         with:
           server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
           api_key: ${{ inputs.api_key || secrets.TEST_INSTANCE_API_KEY }}
-          service_account_id: ${{ inputs.service_account_id }}
           name: ${{ inputs.name }}
           project: ${{ inputs.project }}
           space: ${{ inputs.space }}
