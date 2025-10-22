@@ -24,6 +24,7 @@ on:
 jobs:
   login:
     permissions:
+      id-token: write # This is required for requesting the JWT
       contents: read # This is required for actions/checkout
     runs-on: ubuntu-latest
     name: Test Ephemeral Environment Creation
@@ -38,6 +39,7 @@ jobs:
         with:
           server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
           api_key: ${{ inputs.api_key || secrets.TEST_INSTANCE_API_KEY }}
+          service_account_id: ${{ inputs.service_account_id }}
           name: ${{ inputs.name }}
           project: ${{ inputs.project }}
           space: ${{ inputs.space }}
