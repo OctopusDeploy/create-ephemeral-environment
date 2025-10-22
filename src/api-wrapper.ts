@@ -7,9 +7,9 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
   const project = await GetProjectByName(client, parameters.project, parameters.space);
 
   const environmentRepository = new EnvironmentRepository(client, parameters.space)
-  const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id)
+  const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id)
 
-  client.info(`🎉 Ephemeral environment '${parameters.environment_name}' created successfully!`)
+  client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`)
 
   return response.Id
 }

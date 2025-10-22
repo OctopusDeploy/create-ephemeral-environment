@@ -67409,8 +67409,8 @@ async function createEphemeralEnvironmentFromInputs(client, parameters) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
     const project = await GetProjectByName(client, parameters.project, parameters.space);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
-    const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id);
-    client.info(`🎉 Ephemeral environment '${parameters.environment_name}' created successfully!`);
+    const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
+    client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
     return response.Id;
 }
 async function GetProjectByName(client, projectName, spaceName) {
@@ -67452,7 +67452,7 @@ function getInputParameters() {
         server: (0, core_1.getInput)('server') || process.env[EnvironmentVariables.URL] || '',
         apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
         space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
-        environment_name: (0, core_1.getInput)('environment_name', { required: true }),
+        name: (0, core_1.getInput)('name', { required: true }),
         project: (0, core_1.getInput)('project', { required: true }),
     };
     const errors = [];
@@ -74452,7 +74452,7 @@ const fs_1 = __nccwpck_require__(9896);
         const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters);
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
         if (stepSummaryFile && environmentId) {
-            (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.environment_name}** for project **${parameters.project}**.`);
+            (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
         }
     }
     catch (e) {

@@ -9,7 +9,7 @@ on:
       api_key:
         type: string
         description: The API key to login with. Be careful this may be logged in plain text. Will default to repository secret TEST_INSTANCE_API_KEY if not supplied.
-      environment_name:
+      name:
         description: 'The name of the ephemeral environment to create.'
         required: true
       project:
@@ -36,6 +36,6 @@ jobs:
         with:
           server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
           api_key: ${{ inputs.api_key || secrets.TEST_INSTANCE_API_KEY }}
-          environment_name: ${{ inputs.environment_name }}
+          name: ${{ inputs.name }}
           project: ${{ inputs.project }}
           space: ${{ inputs.space }}

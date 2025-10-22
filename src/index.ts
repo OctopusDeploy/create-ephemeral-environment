@@ -42,7 +42,7 @@ import { writeFileSync } from 'fs'
     if (stepSummaryFile && environmentId) {
       writeFileSync(
         stepSummaryFile,
-        `🐙 Octopus Deploy created an ephemeral environment **${parameters.environment_name}** for project **${parameters.project}**.`
+        `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
       )
     }
   } catch (e: unknown) {

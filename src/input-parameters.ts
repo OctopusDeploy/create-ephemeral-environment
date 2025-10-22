@@ -7,7 +7,7 @@ const EnvironmentVariables = {
 } as const
 
 export interface InputParameters {
-  environment_name: string
+  name: string
   project: string
   space: string
   server: string
@@ -19,7 +19,7 @@ export function getInputParameters(): InputParameters {
     server: getInput('server') || process.env[EnvironmentVariables.URL] || '',
     apiKey: getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
     space: getInput('space') || process.env[EnvironmentVariables.Space] || '',
-    environment_name: getInput('environment_name', { required: true }),
+    name: getInput('name', { required: true }),
     project: getInput('project', { required: true }),
   }
 
