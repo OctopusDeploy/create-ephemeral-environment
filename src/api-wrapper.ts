@@ -4,7 +4,7 @@ import { Client, EnvironmentRepository, Project, ProjectRepository } from '@octo
 export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters): Promise<string> {
   client.info('🐙 Creating an ephemeral environment in Octopus Deploy...')
 
-  const project = await GetProject(client, parameters.project);
+  const project = await GetProject(client, parameters.project, parameters.space);
 
   const environmentRepository = new EnvironmentRepository(client, parameters.space)
   const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id)
@@ -14,8 +14,8 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
   return response.Id
 }
 
-export async function GetProject(client: Client, projectNameOrId: string): Promise<Project> {
-    const projectRepository = new ProjectRepository(client, "Default");
+export async function GetProject(client: Client, projectNameOrId: string, spaceName: string): Promise<Project> {
+    const projectRepository = new ProjectRepository(client, spaceName);
 
     console.log(`Getting Project, "${projectNameOrId}"...`);
 
