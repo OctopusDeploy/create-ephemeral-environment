@@ -20,7 +20,7 @@ export function getInputParameters(): InputParameters {
   const parameters = {
     server: getInput('server') || process.env[EnvironmentVariables.URL] || '',
     apiKey: getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
-    accessToken: getInput('service_account_id') || process.env[EnvironmentVariables.AccessToken],
+    accessToken: process.env[EnvironmentVariables.AccessToken],
     space: getInput('space') || process.env[EnvironmentVariables.Space] || '',
     name: getInput('name', { required: true }),
     project: getInput('project', { required: true }),
