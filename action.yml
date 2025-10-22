@@ -10,7 +10,7 @@ inputs:
     description: 'The name of the ephemeral environment to create.'
     required: true
   project:
-    description: 'The id of the project to connect the environment to.'
+    description: 'The name of the project to connect the environment to.'
     required: true
   space:
     description: 'The name of a space containing the project. The space name is required, but you may also use the OCTOPUS_SPACE environment variable.'

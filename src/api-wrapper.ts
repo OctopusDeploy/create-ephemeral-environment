@@ -4,7 +4,7 @@ import { Client, EnvironmentRepository, Project, ProjectRepository } from '@octo
 export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters): Promise<string> {
   client.info('🐙 Creating an ephemeral environment in Octopus Deploy...')
 
-  const project = await GetProject(client, parameters.project, parameters.space);
+  const project = await GetProjectByName(client, parameters.project, parameters.space);
 
   const environmentRepository = new EnvironmentRepository(client, parameters.space)
   const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id)
@@ -14,25 +14,21 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
   return response.Id
 }
 
-export async function GetProject(client: Client, projectNameOrId: string, spaceName: string): Promise<Project> {
+export async function GetProjectByName(client: Client, projectName: string, spaceName: string): Promise<Project> {
     const projectRepository = new ProjectRepository(client, spaceName);
-
-    console.log(`Getting Project, "${projectNameOrId}"...`);
 
     let project: Project | undefined;
 
     try {
-        console.log(await projectRepository.list()) // remove line // cc
-        project = (await projectRepository.list({ partialName: projectNameOrId })).Items[0];
+        project = (await projectRepository.list({ partialName: projectName })).Items[0];
     } catch (error) {
         console.error(error);
     }
 
     if (project !== null && project !== undefined) {
-        console.log(`Project found: "${project?.Name}" (${project?.Id})`);
         return project;
     } else {
-        console.error(`Project, "${projectNameOrId}" not found`);
-        throw new Error(`Project, "${projectNameOrId}" not found`);
+        console.error(`Project, "${projectName}" not found`);
+        throw new Error(`Project, "${projectName}" not found`);
     }
 }

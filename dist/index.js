@@ -67403,34 +67403,31 @@ function wrappy (fn, cb) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
-exports.GetProject = GetProject;
+exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
-    const project = await GetProject(client, parameters.project, parameters.space);
+    const project = await GetProjectByName(client, parameters.project, parameters.space);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.environment_name, project.Id);
     client.info(`🎉 Ephemeral environment '${parameters.environment_name}' created successfully!`);
     return response.Id;
 }
-async function GetProject(client, projectNameOrId, spaceName) {
+async function GetProjectByName(client, projectName, spaceName) {
     const projectRepository = new api_client_1.ProjectRepository(client, spaceName);
-    console.log(`Getting Project, "${projectNameOrId}"...`);
     let project;
     try {
-        console.log(await projectRepository.list()); // remove line // cc
-        project = (await projectRepository.list({ partialName: projectNameOrId })).Items[0];
+        project = (await projectRepository.list({ partialName: projectName })).Items[0];
     }
     catch (error) {
         console.error(error);
     }
     if (project !== null && project !== undefined) {
-        console.log(`Project found: "${project?.Name}" (${project?.Id})`);
         return project;
     }
     else {
-        console.error(`Project, "${projectNameOrId}" not found`);
-        throw new Error(`Project, "${projectNameOrId}" not found`);
+        console.error(`Project, "${projectName}" not found`);
+        throw new Error(`Project, "${projectName}" not found`);
     }
 }
 //# sourceMappingURL=api-wrapper.js.map
