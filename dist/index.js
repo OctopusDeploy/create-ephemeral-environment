@@ -67405,26 +67405,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ActionContextImpl = void 0;
 const core_1 = __nccwpck_require__(7484);
 class ActionContextImpl {
-    error(message) {
-        (0, core_1.error)(message);
-    }
-    debug(message) {
-        (0, core_1.debug)(message);
-    }
-    exportVariable(name, val) {
-        (0, core_1.exportVariable)(name, val);
-    }
-    getIDToken(aud) {
-        return (0, core_1.getIDToken)(aud);
-    }
     getInput(name, options) {
         return (0, core_1.getInput)(name, options);
-    }
-    setOutput(name, value) {
-        return (0, core_1.setOutput)(name, value);
-    }
-    setSecret(secret) {
-        return (0, core_1.setSecret)(secret);
     }
     setFailed(message) {
         return (0, core_1.setFailed)(message);
@@ -67435,9 +67417,14 @@ class ActionContextImpl {
     warning(message) {
         return (0, core_1.warning)(message);
     }
+    error(message) {
+        (0, core_1.error)(message);
+    }
+    debug(message) {
+        (0, core_1.debug)(message);
+    }
 }
 exports.ActionContextImpl = ActionContextImpl;
-// cc work out which of these functions are not used
 //# sourceMappingURL=ActionContextImpl.js.map
 
 /***/ }),
@@ -67452,7 +67439,7 @@ exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInp
 exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters, logger) {
-    client.info('🐙 Creating an ephemeral environment in Octopus Deploy CC...');
+    client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
     const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
