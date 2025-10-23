@@ -10,14 +10,11 @@ on:
         type: string
         description: The id of the service account to login for. Will default to repository variable TEST_INSTANCE_SERVICE_ACCOUNT_ID if not supplied.
       name:
-        description: 'The name of the ephemeral environment to create.'
-        required: true
+        description: 'The name of the ephemeral environment to create. Will default to a random UUID if not supplied.'
       project:
-        description: 'The name of the project to connect the environment to.'
-        required: true
+        description: 'The name of the project to connect the environment to. Will default to repository variable TEST_PROJECT_NAME if not supplied.'
       space:
-        description: 'The name of a space containing the project.'
-        required: true
+        description: 'The name of a space containing the project. Will default to repository variable TEST_SPACE_NAME if not supplied.'
 
 jobs:
   create-environment:
@@ -39,5 +36,5 @@ jobs:
         uses: ./
         with:
           name: ${{ inputs.name }}
-          project: ${{ inputs.project }}
-          space: ${{ inputs.space }}
+          project: ${{ inputs.project || vars.TEST_PROJECT_NAME}}
+          space: ${{ inputs.space || vars.TEST_SPACE_NAME}}

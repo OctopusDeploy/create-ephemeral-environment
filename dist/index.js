@@ -67443,6 +67443,7 @@ async function GetProjectByName(client, projectName, spaceName, logger) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getInputParameters = getInputParameters;
 const core_1 = __nccwpck_require__(7484);
+const crypto_1 = __nccwpck_require__(6982);
 const EnvironmentVariables = {
     URL: 'OCTOPUS_URL',
     ApiKey: 'OCTOPUS_API_KEY',
@@ -67455,7 +67456,7 @@ function getInputParameters() {
         apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
         accessToken: process.env[EnvironmentVariables.AccessToken],
         space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
-        name: (0, core_1.getInput)('name', { required: true }),
+        name: (0, core_1.getInput)('name', { required: true }) || (0, crypto_1.randomUUID)(),
         project: (0, core_1.getInput)('project', { required: true }),
     };
     const errors = [];
