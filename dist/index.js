@@ -67396,6 +67396,52 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 1412:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ActionContextImpl = void 0;
+const core_1 = __nccwpck_require__(7484);
+class ActionContextImpl {
+    error(message) {
+        (0, core_1.error)(message);
+    }
+    debug(message) {
+        (0, core_1.debug)(message);
+    }
+    exportVariable(name, val) {
+        (0, core_1.exportVariable)(name, val);
+    }
+    getIDToken(aud) {
+        return (0, core_1.getIDToken)(aud);
+    }
+    getInput(name, options) {
+        return (0, core_1.getInput)(name, options);
+    }
+    setOutput(name, value) {
+        return (0, core_1.setOutput)(name, value);
+    }
+    setSecret(secret) {
+        return (0, core_1.setSecret)(secret);
+    }
+    setFailed(message) {
+        return (0, core_1.setFailed)(message);
+    }
+    info(message) {
+        return (0, core_1.info)(message);
+    }
+    warning(message) {
+        return (0, core_1.warning)(message);
+    }
+}
+exports.ActionContextImpl = ActionContextImpl;
+// cc work out which of these functions are not used
+//# sourceMappingURL=ActionContextImpl.js.map
+
+/***/ }),
+
 /***/ 6049:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -67435,6 +67481,66 @@ async function GetProjectByName(client, projectName, spaceName, logger) {
 
 /***/ }),
 
+/***/ 4918:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createEnvironment = createEnvironment;
+const input_parameters_1 = __nccwpck_require__(1920);
+const core_1 = __nccwpck_require__(7484);
+const api_client_1 = __nccwpck_require__(1212);
+// GitHub actions entrypoint
+const api_wrapper_1 = __nccwpck_require__(6049);
+const fs_1 = __nccwpck_require__(9896);
+async function createEnvironment(context) {
+    try {
+        const logger = {
+            debug: message => {
+                if ((0, core_1.isDebug)()) {
+                    (0, core_1.debug)(message);
+                }
+            },
+            info: message => (0, core_1.info)(message),
+            warn: message => (0, core_1.warning)(message),
+            error: (message, err) => {
+                if (err !== undefined) {
+                    (0, core_1.error)(err.message);
+                }
+                else {
+                    (0, core_1.error)(message);
+                }
+            }
+        };
+        const parameters = (0, input_parameters_1.getInputParameters)(context);
+        const config = {
+            userAgentApp: 'GitHubActions create-ephemeral-environment',
+            instanceURL: parameters.server,
+            apiKey: parameters.apiKey,
+            accessToken: parameters.accessToken,
+            logging: logger
+        };
+        const client = await api_client_1.Client.create(config);
+        const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, logger);
+        const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
+        if (stepSummaryFile && environmentId) {
+            (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+        }
+    }
+    catch (e) {
+        if (e instanceof Error) {
+            (0, core_1.setFailed)(e);
+        }
+        else {
+            (0, core_1.setFailed)(`Unknown error: ${e}`);
+        }
+    }
+}
+//# sourceMappingURL=createEnvironment.js.map
+
+/***/ }),
+
 /***/ 1920:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -67442,7 +67548,6 @@ async function GetProjectByName(client, projectName, spaceName, logger) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getInputParameters = getInputParameters;
-const core_1 = __nccwpck_require__(7484);
 const crypto_1 = __nccwpck_require__(6982);
 const EnvironmentVariables = {
     URL: 'OCTOPUS_URL',
@@ -67450,14 +67555,14 @@ const EnvironmentVariables = {
     AccessToken: 'OCTOPUS_ACCESS_TOKEN',
     Space: 'OCTOPUS_SPACE'
 };
-function getInputParameters() {
+function getInputParameters(context) {
     const parameters = {
-        server: (0, core_1.getInput)('server') || process.env[EnvironmentVariables.URL] || '',
-        apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
+        server: context.getInput('server') || process.env[EnvironmentVariables.URL] || '',
+        apiKey: context.getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
         accessToken: process.env[EnvironmentVariables.AccessToken],
-        space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
-        name: (0, core_1.getInput)('name') || (0, crypto_1.randomBytes)(4).toString("hex"),
-        project: (0, core_1.getInput)('project', { required: true }),
+        space: context.getInput('space') || process.env[EnvironmentVariables.Space] || '',
+        name: context.getInput('name') || (0, crypto_1.randomBytes)(4).toString("hex"),
+        project: context.getInput('project', { required: true }),
     };
     const errors = [];
     if (!parameters.server) {
@@ -74420,55 +74525,13 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const input_parameters_1 = __nccwpck_require__(1920);
 const core_1 = __nccwpck_require__(7484);
-const api_client_1 = __nccwpck_require__(1212);
-// GitHub actions entrypoint
-const api_wrapper_1 = __nccwpck_require__(6049);
-const fs_1 = __nccwpck_require__(9896);
-(async () => {
-    try {
-        const logger = {
-            debug: message => {
-                if ((0, core_1.isDebug)()) {
-                    (0, core_1.debug)(message);
-                }
-            },
-            info: message => (0, core_1.info)(message),
-            warn: message => (0, core_1.warning)(message),
-            error: (message, err) => {
-                if (err !== undefined) {
-                    (0, core_1.error)(err.message);
-                }
-                else {
-                    (0, core_1.error)(message);
-                }
-            }
-        };
-        const parameters = (0, input_parameters_1.getInputParameters)();
-        const config = {
-            userAgentApp: 'GitHubActions create-ephemeral-environment',
-            instanceURL: parameters.server,
-            apiKey: parameters.apiKey,
-            accessToken: parameters.accessToken,
-            logging: logger
-        };
-        const client = await api_client_1.Client.create(config);
-        const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, logger);
-        const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
-        if (stepSummaryFile && environmentId) {
-            (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
-        }
-    }
-    catch (e) {
-        if (e instanceof Error) {
-            (0, core_1.setFailed)(e);
-        }
-        else {
-            (0, core_1.setFailed)(`Unknown error: ${e}`);
-        }
-    }
-})();
+const ActionContextImpl_1 = __nccwpck_require__(1412);
+const createEnvironment_1 = __nccwpck_require__(4918);
+(0, createEnvironment_1.createEnvironment)(new ActionContextImpl_1.ActionContextImpl()).catch((error) => {
+    (0, core_1.setFailed)(error);
+    process.exit(1);
+});
 //# sourceMappingURL=index.js.map
 })();
 
