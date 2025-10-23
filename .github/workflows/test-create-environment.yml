@@ -6,9 +6,6 @@ on:
       server:
         type: string
         description: The url of the Octopus Instance. Will default to repository variable TEST_INSTANCE_URL if not supplied.
-      api_key:
-        type: string
-        description: The API key to login with. Be careful this may be logged in plain text. Will default to repository secret TEST_INSTANCE_API_KEY if not supplied.
       service_account_id:
         type: string
         description: The id of the service account to login for. Will default to repository variable TEST_INSTANCE_SERVICE_ACCOUNT_ID if not supplied.
@@ -23,24 +20,7 @@ on:
         required: true
 
 jobs:
-  create-environment-api-key:
-    permissions:
-      contents: read # This is required for actions/checkout
-    runs-on: ubuntu-latest
-    name: Test Ephemeral Environment Creation
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Create Ephemeral Environment
-        uses: ./
-        with:
-          server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
-          api_key: ${{ inputs.api_key || secrets.TEST_INSTANCE_API_KEY }}
-          name: ${{ inputs.name }}
-          project: ${{ inputs.project }}
-          space: ${{ inputs.space }}
-
-  create-environment-oidc:
+  create-environment:
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read # This is required for actions/checkout
