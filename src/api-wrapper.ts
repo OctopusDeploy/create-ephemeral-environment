@@ -1,17 +1,17 @@
-import { InputParameters } from './input-parameters'
-import { Client, EnvironmentRepository, Logger, Project, ProjectRepository } from '@octopusdeploy/api-client'
+import { InputParameters } from './input-parameters';
+import { Client, EnvironmentRepository, Logger, Project, ProjectRepository } from '@octopusdeploy/api-client';
 
 export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters, logger: Logger): Promise<string> {
-  client.info('🐙 Creating an ephemeral environment in Octopus Deploy...')
+  client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
 
   const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
 
-  const environmentRepository = new EnvironmentRepository(client, parameters.space)
-  const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id)
+  const environmentRepository = new EnvironmentRepository(client, parameters.space);
+  const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
 
-  client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`)
+  client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
 
-  return response.Id
+  return response.Id;
 }
 
 export async function GetProjectByName(client: Client, projectName: string, spaceName: string, logger: Logger): Promise<Project> {
