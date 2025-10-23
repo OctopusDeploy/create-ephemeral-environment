@@ -2,7 +2,7 @@ import { InputParameters } from './input-parameters';
 import { Client, EnvironmentRepository, Logger, Project, ProjectRepository } from '@octopusdeploy/api-client';
 
 export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters, logger: Logger): Promise<string> {
-  client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
+  client.info('🐙 Creating an ephemeral environment in Octopus Deploy CC...');
 
   const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
 

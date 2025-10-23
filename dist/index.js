@@ -67452,7 +67452,7 @@ exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInp
 exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters, logger) {
-    client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
+    client.info('🐙 Creating an ephemeral environment in Octopus Deploy CC...');
     const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
