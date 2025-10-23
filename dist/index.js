@@ -67456,7 +67456,7 @@ function getInputParameters() {
         apiKey: (0, core_1.getInput)('api_key') || process.env[EnvironmentVariables.ApiKey],
         accessToken: process.env[EnvironmentVariables.AccessToken],
         space: (0, core_1.getInput)('space') || process.env[EnvironmentVariables.Space] || '',
-        name: (0, core_1.getInput)('name', { required: true }) || (0, crypto_1.randomUUID)(),
+        name: (0, core_1.getInput)('name') || (0, crypto_1.randomUUID)(),
         project: (0, core_1.getInput)('project', { required: true }),
     };
     const errors = [];

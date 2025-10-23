@@ -23,7 +23,7 @@ export function getInputParameters(): InputParameters {
     apiKey: getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
     accessToken: process.env[EnvironmentVariables.AccessToken],
     space: getInput('space') || process.env[EnvironmentVariables.Space] || '',
-    name: getInput('name', { required: true }) || randomUUID(),
+    name: getInput('name') || randomUUID(),
     project: getInput('project', { required: true }),
   }
 
