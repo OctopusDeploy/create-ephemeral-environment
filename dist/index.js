@@ -74426,7 +74426,6 @@ const api_client_1 = __nccwpck_require__(1212);
 // GitHub actions entrypoint
 const api_wrapper_1 = __nccwpck_require__(6049);
 const fs_1 = __nccwpck_require__(9896);
-;
 (async () => {
     try {
         const logger = {

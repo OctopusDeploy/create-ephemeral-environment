@@ -6,7 +6,7 @@ import { Client, ClientConfiguration, Logger } from '@octopusdeploy/api-client';
 import { createEphemeralEnvironmentFromInputs } from './api-wrapper';
 import { writeFileSync } from 'fs';
 
-; (async (): Promise<void> => {
+(async (): Promise<void> => {
   try {
     const logger: Logger = {
       debug: message => {
