@@ -1,3 +1,40 @@
-name: Test create environment
+name: Test Create Ephemeral Environment
+
 on:
   workflow_dispatch:
+    inputs:
+      server:
+        type: string
+        description: The url of the Octopus Instance. Will default to repository variable TEST_INSTANCE_URL if not supplied.
+      service_account_id:
+        type: string
+        description: The id of the service account to login for. Will default to repository variable TEST_INSTANCE_SERVICE_ACCOUNT_ID if not supplied.
+      name:
+        description: 'The name of the ephemeral environment to create. Will default to a random string if not supplied.'
+      project:
+        description: 'The name of the project to connect the environment to. Will default to repository variable TEST_PROJECT_NAME if not supplied.'
+      space:
+        description: 'The name of a space containing the project. Will default to repository variable TEST_SPACE_NAME if not supplied.'
+
+jobs:
+  create-environment:
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read # This is required for actions/checkout
+    runs-on: ubuntu-latest
+    name: Test Ephemeral Environment Creation
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with: 
+          server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
+          service_account_id: ${{ inputs.service_account_id || vars.TEST_INSTANCE_SERVICE_ACCOUNT_ID }}
+
+      - name: Create Ephemeral Environment
+        uses: ./
+        with:
+          name: ${{ inputs.name }}
+          project: ${{ inputs.project || vars.TEST_PROJECT_NAME}}
+          space: ${{ inputs.space || vars.TEST_SPACE_NAME}}
