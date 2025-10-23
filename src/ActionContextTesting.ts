@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import type { ActionContext, InputOptions } from "./ActionContext";
 
 type GetIDTokenFactory = (aud?: string) => Promise<string>;
@@ -14,16 +15,8 @@ export class ActionContextTesting implements ActionContext {
         this.inputs[name] = value;
     }
 
-    getOutputs() {
-        return this.outputs;
-    }
-
     getSecrets() {
         return this.secrets;
-    }
-
-    getExportedVariables() {
-        return this.exportedVariables;
     }
 
     getFailureMessage() {
@@ -38,10 +31,6 @@ export class ActionContextTesting implements ActionContext {
         const inputValue = this.inputs[name];
         if (inputValue === undefined && options?.required === true) throw new Error(`Input required and not supplied: ${name}`);
         return inputValue || "";
-    }
-
-    setOutput(name: string, value: unknown): void {
-        this.outputs[name] = value;
     }
 
     setSecret(secret: string): void {
@@ -66,14 +55,5 @@ export class ActionContextTesting implements ActionContext {
 
     debug(message: string): void {
         console.debug(message);
-    }
-
-    exportVariable(name: string, val: unknown) {
-        this.exportedVariables[name] = val;
-    }
-
-    async getIDToken(aud?: string | undefined) {
-        if (this.idTokenFactory === undefined) throw new Error("No id token factory method set, please use setIDToken to configure");
-        return this.idTokenFactory(aud);
     }
 }
