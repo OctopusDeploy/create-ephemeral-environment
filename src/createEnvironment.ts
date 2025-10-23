@@ -9,6 +9,7 @@ import { ActionContext } from './ActionContext';
 
 export async function createEnvironment(context: ActionContext): Promise<void> {
     try {
+        // cc we dont need this anymore!
         const logger: Logger = {
             debug: message => {
                 if (isDebug()) {
@@ -38,10 +39,11 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
 
         const client = await Client.create(config);
 
-        const environmentId = await createEphemeralEnvironmentFromInputs(client, parameters, logger);
+        await createEphemeralEnvironmentFromInputs(client, parameters, logger);
 
+        // move this to actioncontext and meat of it into ac impl
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
-        if (stepSummaryFile && environmentId) {
+        if (stepSummaryFile) { // cc dont need to check for environment here
             writeFileSync(
                 stepSummaryFile,
                 `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
