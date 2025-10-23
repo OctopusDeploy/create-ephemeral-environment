@@ -1,5 +1,5 @@
 import { getInput } from '@actions/core'
-import { randomUUID } from "crypto";
+import { randomBytes } from "crypto";
 
 const EnvironmentVariables = {
   URL: 'OCTOPUS_URL',
@@ -23,7 +23,7 @@ export function getInputParameters(): InputParameters {
     apiKey: getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
     accessToken: process.env[EnvironmentVariables.AccessToken],
     space: getInput('space') || process.env[EnvironmentVariables.Space] || '',
-    name: getInput('name') || randomUUID(),
+    name: getInput('name') || randomBytes(4).toString("hex"),
     project: getInput('project', { required: true }),
   }
 

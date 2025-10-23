@@ -10,7 +10,7 @@ on:
         type: string
         description: The id of the service account to login for. Will default to repository variable TEST_INSTANCE_SERVICE_ACCOUNT_ID if not supplied.
       name:
-        description: 'The name of the ephemeral environment to create. Will default to a random UUID if not supplied.'
+        description: 'The name of the ephemeral environment to create. Will default to a random string if not supplied.'
       project:
         description: 'The name of the project to connect the environment to. Will default to repository variable TEST_PROJECT_NAME if not supplied.'
       space:
