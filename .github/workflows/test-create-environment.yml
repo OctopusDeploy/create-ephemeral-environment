@@ -22,7 +22,6 @@ on:
         description: 'The name of a space containing the project.'
         required: true
 
-# work out how to run jobs in parallel // cc
 jobs:
   create-environment-api-key:
     permissions:
@@ -43,7 +42,7 @@ jobs:
 
   create-environment-oidc:
     permissions:
-      id-token: write # This is required for requesting the JWT // cc check if we need this
+      id-token: write # This is required for requesting the JWT
       contents: read # This is required for actions/checkout
     runs-on: ubuntu-latest
     name: Test Ephemeral Environment Creation

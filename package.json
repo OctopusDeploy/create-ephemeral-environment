@@ -2,7 +2,7 @@
   "name": "create-ephemeral-environment",
   "version": "1.0.0",
   "description": "GitHub Action to create an ephemeral environment in Octopus Deploy",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "postbuild": "ncc build out/index.js -o dist",

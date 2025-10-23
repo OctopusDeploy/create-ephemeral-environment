@@ -67405,28 +67405,29 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
 exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
-async function createEphemeralEnvironmentFromInputs(client, parameters) {
+async function createEphemeralEnvironmentFromInputs(client, parameters, logger) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
-    const project = await GetProjectByName(client, parameters.project, parameters.space);
+    const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
     client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
     return response.Id;
 }
-async function GetProjectByName(client, projectName, spaceName) {
+async function GetProjectByName(client, projectName, spaceName, logger) {
     const projectRepository = new api_client_1.ProjectRepository(client, spaceName);
     let project;
     try {
-        project = (await projectRepository.list({ partialName: projectName })).Items[0];
+        const projects = (await projectRepository.list({ partialName: projectName })).Items;
+        project = projects.find(p => p.Name === projectName);
     }
     catch (error) {
-        console.error(error);
+        logger.error?.("Error getting project by name:", error);
     }
     if (project !== null && project !== undefined) {
         return project;
     }
     else {
-        console.error(`Project, "${projectName}" not found`);
+        logger.error?.(`Project, "${projectName}" not found`, undefined);
         throw new Error(`Project, "${projectName}" not found`);
     }
 }
@@ -74452,7 +74453,7 @@ const fs_1 = __nccwpck_require__(9896);
             logging: logger
         };
         const client = await api_client_1.Client.create(config);
-        const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters);
+        const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, logger);
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
         if (stepSummaryFile && environmentId) {
             (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);

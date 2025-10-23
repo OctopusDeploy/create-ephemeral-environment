@@ -5,7 +5,7 @@ const EnvironmentVariables = {
   ApiKey: 'OCTOPUS_API_KEY',
   AccessToken: 'OCTOPUS_ACCESS_TOKEN',
   Space: 'OCTOPUS_SPACE'
-} as const
+}
 
 export interface InputParameters {
   name: string
