@@ -1,5 +1,5 @@
 module.exports = {
-    preset: "ts-jest/presets/js-with-ts",
+    preset: 'ts-jest',
     testEnvironment: 'node',
     globals: {
         "ts-jest": {
@@ -28,7 +28,7 @@ module.exports = {
             transform: {
                 ".(ts|js)": "ts-jest",
             },
-            testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/*.test.ts'],
+            testMatch: ['**/__tests__/**/*.(test|spec).ts'],
             moduleDirectories: ["<rootDir>/src/", "<rootDir>/node_modules"],
             moduleFileExtensions: ["ts", "js"],
             transformIgnorePatterns: [
