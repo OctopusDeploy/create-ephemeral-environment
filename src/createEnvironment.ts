@@ -9,24 +9,6 @@ import { ActionContext } from './ActionContext';
 
 export async function createEnvironment(context: ActionContext): Promise<void> {
     try {
-        // cc we dont need this anymore!
-        const logger: Logger = {
-            debug: message => {
-                if (isDebug()) {
-                    debug(message);
-                }
-            },
-            info: message => info(message),
-            warn: message => warning(message),
-            error: (message, err) => {
-                if (err !== undefined) {
-                    error(err.message);
-                } else {
-                    error(message);
-                }
-            }
-        }
-
         const parameters = getInputParameters(context);
 
         const config: ClientConfiguration = {
@@ -34,12 +16,12 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
             instanceURL: parameters.server,
             apiKey: parameters.apiKey,
             accessToken: parameters.accessToken,
-            logging: logger
+            logging: context
         }
 
         const client = await Client.create(config);
 
-        await createEphemeralEnvironmentFromInputs(client, parameters, logger);
+        await createEphemeralEnvironmentFromInputs(client, parameters, context);
 
         // move this to actioncontext and meat of it into ac impl
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;

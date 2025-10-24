@@ -1,10 +1,11 @@
+import { ActionContext } from './ActionContext';
 import { InputParameters } from './input-parameters';
-import { Client, EnvironmentRepository, Logger, Project, ProjectRepository } from '@octopusdeploy/api-client';
+import { Client, EnvironmentRepository, Project, ProjectRepository } from '@octopusdeploy/api-client';
 
-export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters, logger: Logger): Promise<string> {
+export async function createEphemeralEnvironmentFromInputs(client: Client, parameters: InputParameters, context: ActionContext): Promise<string> {
   client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
 
-  const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
+  const project = await GetProjectByName(client, parameters.project, parameters.space, context);
 
   const environmentRepository = new EnvironmentRepository(client, parameters.space);
   const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
@@ -14,7 +15,7 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
   return response.Id;
 }
 
-export async function GetProjectByName(client: Client, projectName: string, spaceName: string, logger: Logger): Promise<Project> {
+export async function GetProjectByName(client: Client, projectName: string, spaceName: string, context: ActionContext): Promise<Project> {
   const projectRepository = new ProjectRepository(client, spaceName);
 
   let project: Project | undefined;
@@ -24,13 +25,13 @@ export async function GetProjectByName(client: Client, projectName: string, spac
     project = projects.find(p => p.Name === projectName);
 
   } catch (error) {
-    logger.error?.("Error getting project by name:", error as Error);
+    context.error?.(`Error getting project by name: ${error}`);
   }
 
   if (project !== null && project !== undefined) {
     return project;
   } else {
-    logger.error?.(`Project, "${projectName}" not found`, undefined);
+    context.error?.(`Project, "${projectName}" not found`);
     throw new Error(`Project, "${projectName}" not found`);
   }
 }

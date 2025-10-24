@@ -67438,15 +67438,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
 exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
-async function createEphemeralEnvironmentFromInputs(client, parameters, logger) {
+async function createEphemeralEnvironmentFromInputs(client, parameters, context) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
-    const project = await GetProjectByName(client, parameters.project, parameters.space, logger);
+    const project = await GetProjectByName(client, parameters.project, parameters.space, context);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
     client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
     return response.Id;
 }
-async function GetProjectByName(client, projectName, spaceName, logger) {
+async function GetProjectByName(client, projectName, spaceName, context) {
     const projectRepository = new api_client_1.ProjectRepository(client, spaceName);
     let project;
     try {
@@ -67454,13 +67454,13 @@ async function GetProjectByName(client, projectName, spaceName, logger) {
         project = projects.find(p => p.Name === projectName);
     }
     catch (error) {
-        logger.error?.("Error getting project by name:", error);
+        context.error?.(`Error getting project by name: ${error}`);
     }
     if (project !== null && project !== undefined) {
         return project;
     }
     else {
-        logger.error?.(`Project, "${projectName}" not found`, undefined);
+        context.error?.(`Project, "${projectName}" not found`);
         throw new Error(`Project, "${projectName}" not found`);
     }
 }
@@ -67483,35 +67483,19 @@ const api_wrapper_1 = __nccwpck_require__(6049);
 const fs_1 = __nccwpck_require__(9896);
 async function createEnvironment(context) {
     try {
-        const logger = {
-            debug: message => {
-                if ((0, core_1.isDebug)()) {
-                    (0, core_1.debug)(message);
-                }
-            },
-            info: message => (0, core_1.info)(message),
-            warn: message => (0, core_1.warning)(message),
-            error: (message, err) => {
-                if (err !== undefined) {
-                    (0, core_1.error)(err.message);
-                }
-                else {
-                    (0, core_1.error)(message);
-                }
-            }
-        };
         const parameters = (0, input_parameters_1.getInputParameters)(context);
         const config = {
             userAgentApp: 'GitHubActions create-ephemeral-environment',
             instanceURL: parameters.server,
             apiKey: parameters.apiKey,
             accessToken: parameters.accessToken,
-            logging: logger
+            logging: context
         };
         const client = await api_client_1.Client.create(config);
-        const environmentId = await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, logger);
+        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+        // move this to actioncontext and meat of it into ac impl
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
-        if (stepSummaryFile && environmentId) {
+        if (stepSummaryFile) { // cc dont need to check for environment here
             (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
         }
     }
