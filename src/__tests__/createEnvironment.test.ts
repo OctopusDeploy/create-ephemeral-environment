@@ -24,11 +24,11 @@ test("Function to create an ephemeral environment outputs step summary on succes
                     Name: "My Project",
                     Id: "Projects-123",
                 }]
-            })
+            });
         }),
         http.get("https://my.octopus.app/api", () => {
             return HttpResponse.json([{
-            }])
+            }]);
         }),
         http.get("https://my.octopus.app/api/spaces", () => {
             return HttpResponse.json({
@@ -36,13 +36,11 @@ test("Function to create an ephemeral environment outputs step summary on succes
                     Name: "Default",
                     Id: "Spaces-1",
                 }]
-            })
+            });
         })
     );
-
     server.listen();
 
-    await createEnvironment(context)
-
+    await createEnvironment(context);
     expect(context.getStepSummary()).toEqual(`🐙 Octopus Deploy created an ephemeral environment **My Ephemeral Environment** for project **My Project**.`);
 });

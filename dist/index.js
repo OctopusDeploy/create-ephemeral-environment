@@ -67418,12 +67418,6 @@ class ActionContextImpl {
             (0, fs_1.writeFileSync)(stepSummaryFile, summary);
         }
     }
-    info(message) {
-        return (0, core_1.info)(message);
-    }
-    warning(message) {
-        return (0, core_1.warning)(message);
-    }
     error(message) {
         (0, core_1.error)(message);
     }

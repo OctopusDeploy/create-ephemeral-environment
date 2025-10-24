@@ -7,8 +7,6 @@ export interface ActionContext {
     setFailed: (message: string) => void;
     writeStepSummary: (summary: string) => void;
 
-    info: (message: string) => void;
     error: (message: string) => void;
-    warning: (message: string) => void;
     debug: (message: string) => void;
 }

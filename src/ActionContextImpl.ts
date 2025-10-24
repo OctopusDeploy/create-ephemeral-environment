@@ -1,4 +1,4 @@
-import { getInput, setFailed, info, error, debug, warning } from "@actions/core";
+import { getInput, setFailed, error, debug } from "@actions/core";
 import type { ActionContext, InputOptions } from "./ActionContext";
 import { writeFileSync } from "fs";
 
@@ -21,19 +21,11 @@ export class ActionContextImpl implements ActionContext {
         }
     }
 
-    info(message: string): void {
-        return info(message);
-    }
-
-    warning(message: string): void {
-        return warning(message);
-    }
-
-    error(message: string) {
+    error(message: string): void {
         error(message);
     }
 
-    debug(message: string) {
+    debug(message: string): void {
         debug(message);
     }
 }
