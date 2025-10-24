@@ -1,10 +1,27 @@
 module.exports = {
     preset: "ts-jest/presets/js-with-ts",
+    testEnvironment: 'node',
     globals: {
         "ts-jest": {
             tsConfig: "<rootDir>/jest.tsconfig.json",
         },
     },
+    collectCoverage: true,
+    collectCoverageFrom: [
+        'src/**/*.ts',
+        '!src/**/*.test.ts',
+        '!src/**/*.d.ts'
+    ],
+    coverageDirectory: 'coverage',
+    coverageReporters: ['text', 'lcov', 'html'],
+    verbose: true,
+    reporters: [
+        'default',
+        ['jest-junit', {
+            outputDirectory: 'test-results',
+            outputName: 'jest-junit.xml',
+        }]
+    ],
     projects: [
         {
             displayName: "test",
