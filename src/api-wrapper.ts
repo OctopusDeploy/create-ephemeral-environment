@@ -21,7 +21,8 @@ export async function GetProjectByName(client: Client, projectName: string, spac
   let project: Project | undefined;
 
   try {
-    const projects = (await projectRepository.list({ partialName: projectName })).Items;
+    const response = await projectRepository.list({ partialName: projectName });
+    const projects = response.Items;
     project = projects.find(p => p.Name === projectName);
 
   } catch (error) {

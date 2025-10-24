@@ -10,6 +10,7 @@ export class ActionContextTesting implements ActionContext {
     exportedVariables: Record<string, unknown> = {};
     failureMessage: string | undefined;
     idTokenFactory: GetIDTokenFactory | undefined;
+    stepSummary: string = "";
 
     addInput(name: string, value: string) {
         this.inputs[name] = value;
@@ -27,6 +28,8 @@ export class ActionContextTesting implements ActionContext {
         this.idTokenFactory = factory;
     }
 
+    // cc pull out functions that you're not using.
+
     getInput(name: string, options?: InputOptions): string {
         const inputValue = this.inputs[name];
         if (inputValue === undefined && options?.required === true) throw new Error(`Input required and not supplied: ${name}`);
@@ -42,7 +45,11 @@ export class ActionContextTesting implements ActionContext {
     }
 
     writeStepSummary(summary: string) {
-        console.log(summary);
+        this.stepSummary = summary;
+    }
+
+    getStepSummary(): string | undefined {
+        return this.stepSummary || undefined;
     }
 
     info(message: string): void {

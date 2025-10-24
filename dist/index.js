@@ -67457,7 +67457,8 @@ async function GetProjectByName(client, projectName, spaceName, context) {
     const projectRepository = new api_client_1.ProjectRepository(client, spaceName);
     let project;
     try {
-        const projects = (await projectRepository.list({ partialName: projectName })).Items;
+        const response = await projectRepository.list({ partialName: projectName });
+        const projects = response.Items;
         project = projects.find(p => p.Name === projectName);
     }
     catch (error) {
@@ -67498,8 +67499,10 @@ async function createEnvironment(context) {
             logging: context
         };
         const client = await api_client_1.Client.create(config);
-        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context); // cc return id to test on?
         context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+        // OR could capture what is written tot he step summary
+        // could add a function to the testing context to get it
     }
     catch (e) {
         if (e instanceof Error) {

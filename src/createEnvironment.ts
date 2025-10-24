@@ -20,9 +20,11 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
 
         const client = await Client.create(config);
 
-        await createEphemeralEnvironmentFromInputs(client, parameters, context);
+        await createEphemeralEnvironmentFromInputs(client, parameters, context); // cc return id to test on?
 
         context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+        // OR could capture what is written tot he step summary
+        // could add a function to the testing context to get it
 
     } catch (e: unknown) {
         if (e instanceof Error) {
