@@ -67480,7 +67480,6 @@ exports.createEnvironment = createEnvironment;
 const input_parameters_1 = __nccwpck_require__(1920);
 const core_1 = __nccwpck_require__(7484);
 const api_client_1 = __nccwpck_require__(1212);
-// GitHub actions entrypoint
 const api_wrapper_1 = __nccwpck_require__(6049);
 async function createEnvironment(context) {
     try {
@@ -67493,10 +67492,8 @@ async function createEnvironment(context) {
             logging: context
         };
         const client = await api_client_1.Client.create(config);
-        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context); // cc return id to test on?
+        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
         context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
-        // OR could capture what is written tot he step summary
-        // could add a function to the testing context to get it
     }
     catch (e) {
         if (e instanceof Error) {

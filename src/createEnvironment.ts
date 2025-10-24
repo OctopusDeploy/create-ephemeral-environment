@@ -1,8 +1,6 @@
 import { getInputParameters } from './input-parameters';
 import { setFailed } from '@actions/core';
 import { Client, ClientConfiguration } from '@octopusdeploy/api-client';
-
-// GitHub actions entrypoint
 import { createEphemeralEnvironmentFromInputs } from './api-wrapper';
 import { ActionContext } from './ActionContext';
 
@@ -17,14 +15,10 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
             accessToken: parameters.accessToken,
             logging: context
         }
-
         const client = await Client.create(config);
 
-        await createEphemeralEnvironmentFromInputs(client, parameters, context); // cc return id to test on?
-
+        await createEphemeralEnvironmentFromInputs(client, parameters, context);
         context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
-        // OR could capture what is written tot he step summary
-        // could add a function to the testing context to get it
 
     } catch (e: unknown) {
         if (e instanceof Error) {

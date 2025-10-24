@@ -18,7 +18,7 @@ test("Function to create an ephemeral environment outputs step summary on succes
                 Id: "Environments-123",
             });
         }),
-        http.get("https://my.octopus.app/api/Spaces-1/projects", () => {
+        http.get("https://my.octopus.app/api/:spaceId/projects", () => {
             return HttpResponse.json({
                 Items: [{
                     Name: "My Project",
