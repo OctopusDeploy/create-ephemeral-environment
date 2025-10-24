@@ -67478,31 +67478,20 @@ async function GetProjectByName(client, projectName, spaceName, context) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEnvironment = createEnvironment;
 const input_parameters_1 = __nccwpck_require__(1920);
-const core_1 = __nccwpck_require__(7484);
 const api_client_1 = __nccwpck_require__(1212);
 const api_wrapper_1 = __nccwpck_require__(6049);
 async function createEnvironment(context) {
-    try {
-        const parameters = (0, input_parameters_1.getInputParameters)(context);
-        const config = {
-            userAgentApp: 'GitHubActions create-ephemeral-environment',
-            instanceURL: parameters.server,
-            apiKey: parameters.apiKey,
-            accessToken: parameters.accessToken,
-            logging: context
-        };
-        const client = await api_client_1.Client.create(config);
-        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
-        context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
-    }
-    catch (e) {
-        if (e instanceof Error) {
-            (0, core_1.setFailed)(e);
-        }
-        else {
-            (0, core_1.setFailed)(`Unknown error: ${e}`);
-        }
-    }
+    const parameters = (0, input_parameters_1.getInputParameters)(context);
+    const config = {
+        userAgentApp: 'GitHubActions create-ephemeral-environment',
+        instanceURL: parameters.server,
+        apiKey: parameters.apiKey,
+        accessToken: parameters.accessToken,
+        logging: context
+    };
+    const client = await api_client_1.Client.create(config);
+    await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+    context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
 }
 //# sourceMappingURL=createEnvironment.js.map
 
