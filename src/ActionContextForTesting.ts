@@ -11,6 +11,10 @@ export class ActionContextForTesting implements ActionContext {
     idTokenFactory: GetIDTokenFactory | undefined;
     stepSummary: string = "";
 
+    addInput(name: string, value: string): void {
+        this.inputs[name] = value;
+    }
+
     getInput(name: string, options?: InputOptions): string {
         const inputValue = this.inputs[name];
         if (inputValue === undefined && options?.required === true) throw new Error(`Input required and not supplied: ${name}`);

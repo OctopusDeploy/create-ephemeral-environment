@@ -1,10 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { ActionContextTesting } from "../ActionContextTesting";
+import { ActionContextForTesting } from "../ActionContextForTesting";
 import { createEnvironment } from "../createEnvironment";
 
 test("Function to create an ephemeral environment outputs step summary on success", async () => {
-    const context = new ActionContextTesting();
+    const context = new ActionContextForTesting();
     const serverUrl = "https://my.octopus.app";
     context.addInput("server", serverUrl);
     context.addInput("api_key", "API-XXXXXXXXXXXXXXXXXXXXXXXX");

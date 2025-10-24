@@ -67396,16 +67396,16 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 1412:
+/***/ 852:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ActionContextImpl = void 0;
+exports.ActionContextImplementation = void 0;
 const core_1 = __nccwpck_require__(7484);
 const fs_1 = __nccwpck_require__(9896);
-class ActionContextImpl {
+class ActionContextImplementation {
     getInput(name, options) {
         return (0, core_1.getInput)(name, options);
     }
@@ -67425,8 +67425,8 @@ class ActionContextImpl {
         (0, core_1.debug)(message);
     }
 }
-exports.ActionContextImpl = ActionContextImpl;
-//# sourceMappingURL=ActionContextImpl.js.map
+exports.ActionContextImplementation = ActionContextImplementation;
+//# sourceMappingURL=ActionContextImplementation.js.map
 
 /***/ }),
 
@@ -74496,9 +74496,9 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
-const ActionContextImpl_1 = __nccwpck_require__(1412);
+const ActionContextImplementation_1 = __nccwpck_require__(852);
 const createEnvironment_1 = __nccwpck_require__(4918);
-(0, createEnvironment_1.createEnvironment)(new ActionContextImpl_1.ActionContextImpl()).catch((error) => {
+(0, createEnvironment_1.createEnvironment)(new ActionContextImplementation_1.ActionContextImplementation()).catch((error) => {
     (0, core_1.setFailed)(error);
     process.exit(1);
 });

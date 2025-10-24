@@ -1,5 +1,5 @@
 import { setFailed } from "@actions/core";
-import { ActionContextImplementation } from "./ActionContextImpl";
+import { ActionContextImplementation } from "./ActionContextImplementation";
 import { createEnvironment } from "./createEnvironment";
 
 createEnvironment(new ActionContextImplementation()).catch((error) => {
