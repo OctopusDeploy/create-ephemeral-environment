@@ -67410,7 +67410,7 @@ class ActionContextImplementation {
         return (0, core_1.getInput)(name, options);
     }
     setFailed(message) {
-        return (0, core_1.setFailed)(message);
+        (0, core_1.setFailed)(message);
     }
     writeStepSummary(summary) {
         const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;

@@ -8,7 +8,7 @@ export class ActionContextImplementation implements ActionContext {
     }
 
     setFailed(message: string): void {
-        return setFailed(message);
+        setFailed(message);
     }
 
     writeStepSummary(summary: string): void {
