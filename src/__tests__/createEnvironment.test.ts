@@ -23,10 +23,21 @@ test("Test 1", async () => {
                 Name: "My Project",
                 Id: "Projects-123",
             }])
+        }),
+        // Do we actually need these?
+        http.get("https://my.octopus.app/api", () => {
+            return HttpResponse.json([{
+            }])
+        }),
+        http.get("https://my.octopus.app/api/spaces", () => {
+            return HttpResponse.json([{
+                Name: "Default",
+                Id: "Spaces-1",
+            }])
         })
     );
 
     server.listen();
 
-    createEnvironment(context)
+    await createEnvironment(context)
 });
