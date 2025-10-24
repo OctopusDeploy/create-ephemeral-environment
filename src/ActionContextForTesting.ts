@@ -1,14 +1,8 @@
 import type { ActionContext, InputOptions } from "./ActionContext";
 
-type GetIDTokenFactory = (aud?: string) => Promise<string>;
-
 export class ActionContextForTesting implements ActionContext {
     inputs: Record<string, string> = {};
-    outputs: Record<string, unknown> = {};
-    secrets: string[] = [];
-    exportedVariables: Record<string, unknown> = {};
     failureMessage: string | undefined;
-    idTokenFactory: GetIDTokenFactory | undefined;
     stepSummary: string = "";
 
     addInput(name: string, value: string): void {
