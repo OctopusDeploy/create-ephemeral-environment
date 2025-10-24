@@ -67424,6 +67424,12 @@ class ActionContextImplementation {
     debug(message) {
         (0, core_1.debug)(message);
     }
+    info(message) {
+        (0, core_1.info)(message);
+    }
+    warning(message) {
+        (0, core_1.warning)(message);
+    }
 }
 exports.ActionContextImplementation = ActionContextImplementation;
 //# sourceMappingURL=ActionContextImplementation.js.map

@@ -34,4 +34,12 @@ export class ActionContextForTesting implements ActionContext {
     debug(message: string): void {
         console.debug(message);
     }
+
+    info(message: string): void {
+        console.debug(message);
+    }
+
+    warning(message: string): void {
+        console.debug(message);
+    }
 }
