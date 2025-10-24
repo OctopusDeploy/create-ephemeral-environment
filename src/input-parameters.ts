@@ -1,5 +1,5 @@
-import { getInput } from '@actions/core';
 import { randomBytes } from "crypto";
+import { ActionContext } from './ActionContext';
 
 const EnvironmentVariables = {
   URL: 'OCTOPUS_URL',
@@ -17,15 +17,15 @@ export interface InputParameters {
   accessToken?: string;
 }
 
-export function getInputParameters(): InputParameters {
+export function getInputParameters(context: ActionContext): InputParameters {
   const parameters = {
-    server: getInput('server') || process.env[EnvironmentVariables.URL] || '',
-    apiKey: getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
+    server: context.getInput('server') || process.env[EnvironmentVariables.URL] || '',
+    apiKey: context.getInput('api_key') || process.env[EnvironmentVariables.ApiKey],
     accessToken: process.env[EnvironmentVariables.AccessToken],
-    space: getInput('space') || process.env[EnvironmentVariables.Space] || '',
-    name: getInput('name') || randomBytes(4).toString("hex"),
-    project: getInput('project', { required: true }),
-  }
+    space: context.getInput('space') || process.env[EnvironmentVariables.Space] || '',
+    name: context.getInput('name') || randomBytes(4).toString("hex"),
+    project: context.getInput('project', { required: true }),
+  };
 
   const errors: string[] = [];
   if (!parameters.server) {
