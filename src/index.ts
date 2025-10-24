@@ -1,8 +1,8 @@
 import { setFailed } from "@actions/core";
-import { ActionContextImpl } from "./ActionContextImpl";
+import { ActionContextImplementation } from "./ActionContextImpl";
 import { createEnvironment } from "./createEnvironment";
 
-createEnvironment(new ActionContextImpl()).catch((error) => {
+createEnvironment(new ActionContextImplementation()).catch((error) => {
   setFailed(error);
   process.exit(1);
 });

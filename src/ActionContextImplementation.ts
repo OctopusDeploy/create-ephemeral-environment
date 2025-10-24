@@ -2,7 +2,7 @@ import { getInput, setFailed, error, debug } from "@actions/core";
 import type { ActionContext, InputOptions } from "./ActionContext";
 import { writeFileSync } from "fs";
 
-export class ActionContextImpl implements ActionContext {
+export class ActionContextImplementation implements ActionContext {
     getInput(name: string, options?: InputOptions): string {
         return getInput(name, options);
     }
