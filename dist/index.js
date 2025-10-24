@@ -67404,12 +67404,19 @@ function wrappy (fn, cb) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ActionContextImpl = void 0;
 const core_1 = __nccwpck_require__(7484);
+const fs_1 = __nccwpck_require__(9896);
 class ActionContextImpl {
     getInput(name, options) {
         return (0, core_1.getInput)(name, options);
     }
     setFailed(message) {
         return (0, core_1.setFailed)(message);
+    }
+    writeStepSummary(summary) {
+        const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
+        if (stepSummaryFile) {
+            (0, fs_1.writeFileSync)(stepSummaryFile, summary);
+        }
     }
     info(message) {
         return (0, core_1.info)(message);
@@ -67480,7 +67487,6 @@ const core_1 = __nccwpck_require__(7484);
 const api_client_1 = __nccwpck_require__(1212);
 // GitHub actions entrypoint
 const api_wrapper_1 = __nccwpck_require__(6049);
-const fs_1 = __nccwpck_require__(9896);
 async function createEnvironment(context) {
     try {
         const parameters = (0, input_parameters_1.getInputParameters)(context);
@@ -67493,11 +67499,7 @@ async function createEnvironment(context) {
         };
         const client = await api_client_1.Client.create(config);
         await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
-        // move this to actioncontext and meat of it into ac impl
-        const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
-        if (stepSummaryFile) { // cc dont need to check for environment here
-            (0, fs_1.writeFileSync)(stepSummaryFile, `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
-        }
+        context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
     }
     catch (e) {
         if (e instanceof Error) {

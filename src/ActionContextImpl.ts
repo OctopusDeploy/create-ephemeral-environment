@@ -1,5 +1,6 @@
 import { getInput, setFailed, info, error, debug, warning } from "@actions/core";
 import type { ActionContext, InputOptions } from "./ActionContext";
+import { writeFileSync } from "fs";
 
 export class ActionContextImpl implements ActionContext {
     getInput(name: string, options?: InputOptions): string {
@@ -8,6 +9,16 @@ export class ActionContextImpl implements ActionContext {
 
     setFailed(message: string): void {
         return setFailed(message);
+    }
+
+    writeStepSummary(summary: string): void {
+        const stepSummaryFile = process.env.GITHUB_STEP_SUMMARY;
+        if (stepSummaryFile) {
+            writeFileSync(
+                stepSummaryFile,
+                summary
+            );
+        }
     }
 
     info(message: string): void {

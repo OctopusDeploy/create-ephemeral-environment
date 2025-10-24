@@ -41,6 +41,10 @@ export class ActionContextTesting implements ActionContext {
         this.failureMessage = message;
     }
 
+    writeStepSummary(summary: string) {
+        console.log(summary);
+    }
+
     info(message: string): void {
         console.log(message);
     }
