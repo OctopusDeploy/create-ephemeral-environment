@@ -67443,6 +67443,7 @@ exports.ActionContextImplementation = ActionContextImplementation;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
+exports.GetExistingEnvironmentIdByName = GetExistingEnvironmentIdByName;
 exports.GetProjectByName = GetProjectByName;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters, context) {
@@ -67452,6 +67453,18 @@ async function createEphemeralEnvironmentFromInputs(client, parameters, context)
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
     client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
     return response.Id;
+}
+async function GetExistingEnvironmentIdByName(client, environmentName, spaceName, context) {
+    const environmentRepository = new api_client_1.EnvironmentRepository(client, spaceName);
+    const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
+    if (existingEnvironment) {
+        client.info(`♻️ Reusing existing environment '${environmentName}' with ID '${existingEnvironment.Id}'.`);
+        return existingEnvironment.Id;
+    }
+    else {
+        context.error?.(`Environment '${environmentName}' already exists but could not be retrieved.`);
+        throw new Error(`Environment '${environmentName}' already exists but could not be retrieved.`);
+    }
 }
 async function GetProjectByName(client, projectName, spaceName, context) {
     const projectRepository = new api_client_1.ProjectRepository(client, spaceName);
@@ -67486,6 +67499,7 @@ exports.createEnvironment = createEnvironment;
 const input_parameters_1 = __nccwpck_require__(1920);
 const api_client_1 = __nccwpck_require__(1212);
 const api_wrapper_1 = __nccwpck_require__(6049);
+const octopusError_1 = __nccwpck_require__(7795);
 async function createEnvironment(context) {
     const parameters = (0, input_parameters_1.getInputParameters)(context);
     const config = {
@@ -67493,10 +67507,23 @@ async function createEnvironment(context) {
         instanceURL: parameters.server,
         apiKey: parameters.apiKey,
         accessToken: parameters.accessToken,
-        logging: context
+        logging: context,
     };
     const client = await api_client_1.Client.create(config);
-    await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+    try {
+        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+    }
+    catch (e) {
+        if (e instanceof octopusError_1.OctopusError) {
+            if (e.ErrorMessage &&
+                e.ErrorMessage.includes('The project is already connected to this ephemeral environment')) {
+                await (0, api_wrapper_1.GetExistingEnvironmentIdByName)(client, parameters.name, parameters.space, context);
+                context.writeStepSummary(`🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+                return;
+            }
+            throw e;
+        }
+    }
     context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
 }
 //# sourceMappingURL=createEnvironment.js.map

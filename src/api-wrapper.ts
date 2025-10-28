@@ -8,11 +8,27 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
   const project = await GetProjectByName(client, parameters.project, parameters.space, context);
 
   const environmentRepository = new EnvironmentRepository(client, parameters.space);
-  const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
 
-  client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
+  const response = await environmentRepository.createEphemeralEnvironment(
+    parameters.name,
+    project.Id
+  );
+    client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
 
   return response.Id;
+}
+
+export async function GetExistingEnvironmentIdByName(client: Client, environmentName: string, spaceName: string, context: ActionContext): Promise<string> {
+  const environmentRepository = new EnvironmentRepository(client, spaceName);
+  const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
+        
+  if (existingEnvironment) {
+    client.info(`♻️ Reusing existing environment '${environmentName}' with ID '${existingEnvironment.Id}'.`);
+    return existingEnvironment.Id;
+  } else {
+    context.error?.(`Environment '${environmentName}' already exists but could not be retrieved.`);
+    throw new Error(`Environment '${environmentName}' already exists but could not be retrieved.`);
+  }
 }
 
 export async function GetProjectByName(client: Client, projectName: string, spaceName: string, context: ActionContext): Promise<Project> {
