@@ -21,12 +21,12 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
 export async function GetExistingEnvironmentIdByName(client: Client, environmentName: string, spaceName: string, context: ActionContext): Promise<string> {
   const environmentRepository = new EnvironmentRepository(client, spaceName);
   const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
-        
+
   if (existingEnvironment) {
     client.info(`♻️ Reusing existing environment '${environmentName}' with ID '${existingEnvironment.Id}'.`);
     return existingEnvironment.Id;
   } else {
-    context.error?.(`Environment '${environmentName}' already exists but could not be retrieved.`);
+    context.error(`Environment '${environmentName}' already exists but could not be retrieved.`);
     throw new Error(`Environment '${environmentName}' already exists but could not be retrieved.`);
   }
 }
@@ -42,13 +42,13 @@ export async function GetProjectByName(client: Client, projectName: string, spac
     project = projects.find(p => p.Name === projectName);
 
   } catch (error) {
-    context.error?.(`Error getting project by name: ${error}`);
+    context.error(`Error getting project by name: ${error}`);
   }
 
   if (project !== null && project !== undefined) {
     return project;
   } else {
-    context.error?.(`Project, "${projectName}" not found`);
+    context.error(`Project, "${projectName}" not found`);
     throw new Error(`Project, "${projectName}" not found`);
   }
 }

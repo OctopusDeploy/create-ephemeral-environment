@@ -67462,7 +67462,7 @@ async function GetExistingEnvironmentIdByName(client, environmentName, spaceName
         return existingEnvironment.Id;
     }
     else {
-        context.error?.(`Environment '${environmentName}' already exists but could not be retrieved.`);
+        context.error(`Environment '${environmentName}' already exists but could not be retrieved.`);
         throw new Error(`Environment '${environmentName}' already exists but could not be retrieved.`);
     }
 }
@@ -67475,13 +67475,13 @@ async function GetProjectByName(client, projectName, spaceName, context) {
         project = projects.find(p => p.Name === projectName);
     }
     catch (error) {
-        context.error?.(`Error getting project by name: ${error}`);
+        context.error(`Error getting project by name: ${error}`);
     }
     if (project !== null && project !== undefined) {
         return project;
     }
     else {
-        context.error?.(`Project, "${projectName}" not found`);
+        context.error(`Project, "${projectName}" not found`);
         throw new Error(`Project, "${projectName}" not found`);
     }
 }
