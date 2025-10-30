@@ -105,25 +105,5 @@ describe("createEnvironment", () => {
             
             server.close();
         });
-
-        test("should throw error when environment exists but cannot be retrieved", async () => {
-            const context = createTestContext();
-            
-            const server = setupServer(
-                ...createErrorHandlers(),
-                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
-                    return HttpResponse.json({
-                        Items: [] // Simulate that the environment cannot be found
-                    });
-                })
-            );
-            server.listen();
-
-            await expect(createEnvironment(context)).rejects.toThrowError(
-                `Environment '${testData.environmentName}' already exists but could not be retrieved.`
-            );
-            
-            server.close();
-        });
     });
 });

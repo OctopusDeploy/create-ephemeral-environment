@@ -32,7 +32,8 @@ jobs:
           server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
           service_account_id: ${{ inputs.service_account_id || vars.TEST_INSTANCE_SERVICE_ACCOUNT_ID }}
 
-      - name: Create Ephemeral Environment
+      - name: Recreate Ephemeral Environment
+        # Checks that we can handle the case when an environment already exists
         uses: ./
         with:
           name: ${{ inputs.name }}

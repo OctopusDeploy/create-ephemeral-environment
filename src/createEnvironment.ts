@@ -1,6 +1,6 @@
 import { getInputParameters } from './input-parameters';
 import { Client, ClientConfiguration } from '@octopusdeploy/api-client';
-import { createEphemeralEnvironmentFromInputs, GetExistingEnvironmentIdByName } from './api-wrapper';
+import { createEphemeralEnvironmentFromInputs } from './api-wrapper';
 import { ActionContext } from './ActionContext';
 import { OctopusError } from '@octopusdeploy/api-client/dist/octopusError';
 
@@ -24,8 +24,6 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
         e.ErrorMessage &&
         e.ErrorMessage.includes('The project is already connected to this ephemeral environment')
       ) {
-        await GetExistingEnvironmentIdByName(client, parameters.name, parameters.space, context);
-
         context.writeStepSummary(
           `🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
         );
