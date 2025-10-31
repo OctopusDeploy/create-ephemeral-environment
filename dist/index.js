@@ -4566,6 +4566,23 @@ var EnvironmentRepository = /** @class */ (function (_super) {
             });
         });
     };
+    EnvironmentRepository.prototype.getEphemeralEnvironmentProjectStatus = function (environmentId, projectId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.request("".concat(__1.spaceScopedRoutePrefix, "/projects/{projectId}/environments/ephemeral/{id}/status"), {
+                            spaceName: this.spaceName,
+                            projectId: projectId,
+                            id: environmentId,
+                        })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, response];
+                }
+            });
+        });
+    };
     EnvironmentRepository.prototype.deprovisionEphemeralEnvironmentForProject = function (environmentId, projectId) {
         return __awaiter(this, void 0, void 0, function () {
             var response;
@@ -4612,7 +4629,7 @@ var EnvironmentRepository = /** @class */ (function (_super) {
                         })];
                     case 1:
                         listResponse = _a.sent();
-                        matchingEnvironments = listResponse.Items.filter(function (env) { return env.Name === environmentName; });
+                        matchingEnvironments = listResponse.Items.filter(function (env) { return env.Name.toLowerCase() === environmentName.toLowerCase(); });
                         if (matchingEnvironments.length > 1) {
                             throw (0, console_1.error)("Multiple environments found with the name '".concat(environmentName));
                         }
@@ -67444,13 +67461,14 @@ exports.ActionContextImplementation = ActionContextImplementation;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
 exports.GetProjectByName = GetProjectByName;
+exports.GetExistingEnvironmentIdByName = GetExistingEnvironmentIdByName;
+exports.GetEnvironmentProjectStatus = GetEnvironmentProjectStatus;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters, context) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
     const project = await GetProjectByName(client, parameters.project, parameters.space, context);
     const environmentRepository = new api_client_1.EnvironmentRepository(client, parameters.space);
     const response = await environmentRepository.createEphemeralEnvironment(parameters.name, project.Id);
-    client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
     return response.Id;
 }
 async function GetProjectByName(client, projectName, spaceName, context) {
@@ -67462,15 +67480,28 @@ async function GetProjectByName(client, projectName, spaceName, context) {
         project = projects.find(p => p.Name === projectName);
     }
     catch (error) {
-        context.error?.(`Error getting project by name: ${error}`);
+        context.error(`Error getting project by name: ${error}`);
     }
     if (project !== null && project !== undefined) {
         return project;
     }
     else {
-        context.error?.(`Project, "${projectName}" not found`);
+        context.error(`Project, "${projectName}" not found`);
         throw new Error(`Project, "${projectName}" not found`);
     }
+}
+async function GetExistingEnvironmentIdByName(client, environmentName, spaceName) {
+    const environmentRepository = new api_client_1.EnvironmentRepository(client, spaceName);
+    const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
+    if (existingEnvironment) {
+        return existingEnvironment.Id;
+    }
+    return null;
+}
+async function GetEnvironmentProjectStatus(client, environmentId, projectId, spaceName) {
+    const environmentRepository = new api_client_1.EnvironmentRepository(client, spaceName);
+    const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
+    return projectStatus.Status;
 }
 //# sourceMappingURL=api-wrapper.js.map
 
@@ -67493,11 +67524,36 @@ async function createEnvironment(context) {
         instanceURL: parameters.server,
         apiKey: parameters.apiKey,
         accessToken: parameters.accessToken,
-        logging: context
+        logging: context,
     };
     const client = await api_client_1.Client.create(config);
-    await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
-    context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+    context.info(`🐙 Creating ephemeral environment with name ${parameters.name}...`);
+    const environmentId = await (0, api_wrapper_1.GetExistingEnvironmentIdByName)(client, parameters.name, parameters.space);
+    if (!environmentId) {
+        context.info(`🆕 Environment not found - creating new environment`);
+        await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+        client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
+        context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+        return;
+    }
+    else {
+        context.info(`✅ Environment found - checking project connection`);
+        const project = await (0, api_wrapper_1.GetProjectByName)(client, parameters.project, parameters.space, context);
+        const environmentProjectStatus = await (0, api_wrapper_1.GetEnvironmentProjectStatus)(client, environmentId, project.Id, parameters.space);
+        context.info(`🔗 Environment project status: ${environmentProjectStatus}`);
+        if (environmentProjectStatus == 'NotConnected') {
+            context.info(`🔌 Connecting existing ephemeral environment ${parameters.name} to project ${parameters.project}.`);
+            await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+            context.info(`🔗 Connected existing environment ${parameters.name} to project ${parameters.project}`);
+            context.writeStepSummary(`🐙 Octopus Deploy connected ephemeral environment **${parameters.name}** to project **${parameters.project}**.`);
+            return;
+        }
+        else {
+            context.info(`♻️ Ephemeral environment ${parameters.name} already exists and is connected to project ${parameters.project}. Reusing existing environment.`);
+            context.writeStepSummary(`🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+            return;
+        }
+    }
 }
 //# sourceMappingURL=createEnvironment.js.map
 

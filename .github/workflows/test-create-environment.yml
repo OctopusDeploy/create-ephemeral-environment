@@ -38,3 +38,11 @@ jobs:
           name: ${{ inputs.name }}
           project: ${{ inputs.project || vars.TEST_PROJECT_NAME}}
           space: ${{ inputs.space || vars.TEST_SPACE_NAME}}
+
+      - name: Recreate Ephemeral Environment
+        # Checks that we can handle the case when an environment already exists
+        uses: ./
+        with:
+          name: ${{ inputs.name }}
+          project: ${{ inputs.project || vars.TEST_PROJECT_NAME}}
+          space: ${{ inputs.space || vars.TEST_SPACE_NAME}}
