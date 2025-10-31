@@ -13,7 +13,6 @@ export async function createEphemeralEnvironmentFromInputs(client: Client, param
     parameters.name,
     project.Id
   );
-    client.info(`🎉 Ephemeral environment '${parameters.name}' created successfully!`);
 
   return response.Id;
 }
@@ -40,7 +39,7 @@ export async function GetProjectByName(client: Client, projectName: string, spac
   }
 }
 
-export async function GetExistingEnvironmentIdByName(client: Client, environmentName: string, spaceName: string, context: ActionContext): Promise<string | null> {
+export async function GetExistingEnvironmentIdByName(client: Client, environmentName: string, spaceName: string): Promise<string | null> {
   const environmentRepository = new EnvironmentRepository(client, spaceName);
   const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
         
@@ -48,14 +47,13 @@ export async function GetExistingEnvironmentIdByName(client: Client, environment
     return existingEnvironment.Id;
   } 
 
-  context.info(`Environment, "${environmentName}" not found`);
+
   return null;
 }
 
-export async function GetEnvironmentProjectState(client: Client, environmentId: string, projectId: string, spaceName: string, context: ActionContext): Promise<string | null> {
+export async function GetEnvironmentProjectState(client: Client, environmentId: string, projectId: string, spaceName: string): Promise<string | null> {
   const environmentRepository = new EnvironmentRepository(client, spaceName);
   const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
   
-  context.info(`Environment, "${environmentId}" status for project ID "${projectId}": ${projectStatus.Status}`);
   return projectStatus.Status;
 }
