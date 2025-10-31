@@ -126,11 +126,12 @@ describe("createEnvironment", () => {
                     return HttpResponse.json({
                       Items: [
                         {
-                          Name: testData.environmentName.toUpperCase,
+                          Name: testData.environmentName.toUpperCase(),
                           Id: testData.environmentId,
                         },
                       ],
-                    });}),
+                    });
+                }),
                 http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
                     return HttpResponse.json({
                             Status: 'NotProvisioned',
