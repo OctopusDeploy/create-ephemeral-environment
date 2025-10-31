@@ -71,27 +71,24 @@ describe("createEnvironment", () => {
         });
     });
 
-    describe("when environment already exists", () => {
-        const createErrorHandlers = () => [
-            ...createBaseHandlers(),
-            http.post("https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral", () => {
-                return HttpResponse.json({
-                    ErrorMessage: "The project is already connected to this ephemeral environment"
-                }, { status: 400 });
-            })
-        ] as const;
-
-        test("should reuse existing environment when it can be retrieved", async () => {
+    describe("when environment already exists and is connected", () => {
+                test("should reuse existing environment", async () => {
             const context = createTestContext();
             
             const server = setupServer(
-                ...createErrorHandlers(),
+                ...createBaseHandlers(),
                 http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
                     return HttpResponse.json({
-                        Items: [{
-                            Name: testData.environmentName,
-                            Id: testData.environmentId,
-                        }]
+                      Items: [
+                        {
+                          Name: testData.environmentName,
+                          Id: testData.environmentId,
+                        },
+                      ],
+                    });}),
+                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
+                    return HttpResponse.json({
+                            Status: 'NotProvisioned',
                     });
                 })
             );
@@ -101,6 +98,39 @@ describe("createEnvironment", () => {
             
             expect(context.getStepSummary()).toEqual(
                 `🐙 Octopus Deploy reused the existing ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
+            );
+            
+            server.close();
+        });
+    });
+
+     describe("when environment already exists and is not connected", () => {
+        test("should connect existing environment", async () => {
+            const context = createTestContext();
+            
+             const server = setupServer(
+                ...createBaseHandlers(),
+                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
+                    return HttpResponse.json({
+                      Items: [
+                        {
+                          Name: testData.environmentName,
+                          Id: testData.environmentId,
+                        },
+                      ],
+                    });}),
+                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
+                    return HttpResponse.json({
+                            Status: 'NotConnected',
+                    });
+                })
+            );
+            server.listen();
+
+            await createEnvironment(context);
+            
+             expect(context.getStepSummary()).toEqual(
+                `🐙 Octopus Deploy created an ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
             );
             
             server.close();

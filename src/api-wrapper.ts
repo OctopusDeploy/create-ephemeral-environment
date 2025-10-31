@@ -39,3 +39,23 @@ export async function GetProjectByName(client: Client, projectName: string, spac
     throw new Error(`Project, "${projectName}" not found`);
   }
 }
+
+export async function GetExistingEnvironmentIdByName(client: Client, environmentName: string, spaceName: string, context: ActionContext): Promise<string | null> {
+  const environmentRepository = new EnvironmentRepository(client, spaceName);
+  const existingEnvironment = await environmentRepository.getEnvironmentByName(environmentName);
+        
+  if (existingEnvironment) {
+    return existingEnvironment.Id;
+  } 
+
+  context.info(`Environment, "${environmentName}" not found`);
+  return null;
+}
+
+export async function GetEnvironmentProjectState(client: Client, environmentId: string, projectId: string, spaceName: string, context: ActionContext): Promise<string | null> {
+  const environmentRepository = new EnvironmentRepository(client, spaceName);
+  const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
+  
+  context.info(`Environment, "${projectStatus}" not found`);
+  return projectStatus.Status;
+}

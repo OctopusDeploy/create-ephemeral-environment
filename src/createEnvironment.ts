@@ -1,8 +1,7 @@
 import { getInputParameters } from './input-parameters';
 import { Client, ClientConfiguration } from '@octopusdeploy/api-client';
-import { createEphemeralEnvironmentFromInputs } from './api-wrapper';
+import { createEphemeralEnvironmentFromInputs, GetEnvironmentProjectState, GetExistingEnvironmentIdByName, GetProjectByName } from './api-wrapper';
 import { ActionContext } from './ActionContext';
-import { OctopusError } from '@octopusdeploy/api-client/dist/octopusError';
 
 export async function createEnvironment(context: ActionContext): Promise<void> {
   const parameters = getInputParameters(context);
@@ -16,25 +15,27 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
   };
   const client = await Client.create(config);
 
-  try {
-    await createEphemeralEnvironmentFromInputs(client, parameters, context);
-  } catch (e: unknown) {
-    if (e instanceof OctopusError) {
-      if (
-        e.ErrorMessage &&
-        e.ErrorMessage.includes('The project is already connected to this ephemeral environment')
-      ) {
+    const environmentId = await GetExistingEnvironmentIdByName(client, parameters.name, parameters.space, context);
+    if (!environmentId) {
+      await createEphemeralEnvironmentFromInputs(client, parameters, context);
+      context.writeStepSummary(
+        `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
+      );
+      return;
+    } else {
+      const project = await GetProjectByName(client, parameters.project, parameters.space, context);
+      const environmentProjectState = await GetEnvironmentProjectState(client, environmentId!, project.Id, parameters.space, context);
+      if (environmentProjectState == "NotConnected ") {
+        await createEphemeralEnvironmentFromInputs(client, parameters, context);
         context.writeStepSummary(
-          `🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
+          `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
         );
         return;
+    } else {
+      context.writeStepSummary(
+        `🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
+      );
+        return;
       }
-
-      throw e;
     }
   }
-
-  context.writeStepSummary(
-    `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
-  );
-}
