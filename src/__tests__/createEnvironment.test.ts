@@ -60,7 +60,7 @@ describe("createEnvironment", () => {
     ];
 
     describe("when creating a new ephemeral environment", () => {
-        test("should output success step summary on successful creation", async () => {
+        test("should create a new environment with the project connected", async () => {
             const context = createTestContext();
             
             const server = setupServer(
