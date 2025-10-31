@@ -32,15 +32,15 @@ jobs:
           server: ${{ inputs.server || vars.TEST_INSTANCE_URL }}
           service_account_id: ${{ inputs.service_account_id || vars.TEST_INSTANCE_SERVICE_ACCOUNT_ID }}
 
-      - name: Recreate Ephemeral Environment
-        # Checks that we can handle the case when an environment already exists
+      - name: Create Ephemeral Environment
         uses: ./
         with:
           name: ${{ inputs.name }}
           project: ${{ inputs.project || vars.TEST_PROJECT_NAME}}
           space: ${{ inputs.space || vars.TEST_SPACE_NAME}}
 
-      - name: Create Ephemeral Environment
+      - name: Recreate Ephemeral Environment
+        # Checks that we can handle the case when an environment already exists
         uses: ./
         with:
           name: ${{ inputs.name }}

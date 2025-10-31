@@ -56,6 +56,6 @@ export async function GetEnvironmentProjectState(client: Client, environmentId: 
   const environmentRepository = new EnvironmentRepository(client, spaceName);
   const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
   
-  context.info(`Environment, "${projectStatus}" not found`);
+  context.info(`Environment, "${environmentId}" status for project ID "${projectId}": ${projectStatus.Status}`);
   return projectStatus.Status;
 }

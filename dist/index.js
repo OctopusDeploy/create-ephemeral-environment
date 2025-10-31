@@ -67503,7 +67503,7 @@ async function GetExistingEnvironmentIdByName(client, environmentName, spaceName
 async function GetEnvironmentProjectState(client, environmentId, projectId, spaceName, context) {
     const environmentRepository = new api_client_1.EnvironmentRepository(client, spaceName);
     const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
-    context.info(`Environment, "${projectStatus}" not found`);
+    context.info(`Environment, "${environmentId}" status for project ID "${projectId}": ${projectStatus.Status}`);
     return projectStatus.Status;
 }
 //# sourceMappingURL=api-wrapper.js.map
@@ -67530,22 +67530,33 @@ async function createEnvironment(context) {
         logging: context,
     };
     const client = await api_client_1.Client.create(config);
+    context.info(`🐙 Creating ephemeral environment with name ${parameters.name}...`);
     const environmentId = await (0, api_wrapper_1.GetExistingEnvironmentIdByName)(client, parameters.name, parameters.space, context);
+    context.info(`🔍 Environment lookup result: ${environmentId ? `Found ID: ${environmentId}` : 'Not found'}`);
     if (!environmentId) {
+        context.info(`🆕 Environment not found - creating new environment`);
         await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
         context.writeStepSummary(`🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
         return;
     }
     else {
+        context.info(`✅ Environment found - checking project connection`);
         const project = await (0, api_wrapper_1.GetProjectByName)(client, parameters.project, parameters.space, context);
         const environmentProjectState = await (0, api_wrapper_1.GetEnvironmentProjectState)(client, environmentId, project.Id, parameters.space, context);
+        context.info(`🔗 Environment project state: ${environmentProjectState}`);
         if (environmentProjectState == 'NotConnected') {
+            context.info(`🔌 Connecting existing environment to project`);
             await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
+            context.info(`🐙 Connecting existing ephemeral environment ${parameters.name} to project ${parameters.project}.`);
             context.writeStepSummary(`🐙 Octopus Deploy connected ephemeral environment **${parameters.name}** to project **${parameters.project}**.`);
+            context.info(`📝 Step summary written: Connected existing environment`);
             return;
         }
         else {
+            context.info(`♻️ Environment already connected - reusing`);
+            context.info(`🐙 Ephemeral environment ${parameters.name} already exists and is connected to project ${parameters.project}. Reusing existing environment.`);
             context.writeStepSummary(`🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`);
+            context.info(`📝 Step summary written: Reused existing environment`);
             return;
         }
     }
