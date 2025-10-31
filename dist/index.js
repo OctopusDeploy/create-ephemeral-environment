@@ -4629,7 +4629,7 @@ var EnvironmentRepository = /** @class */ (function (_super) {
                         })];
                     case 1:
                         listResponse = _a.sent();
-                        matchingEnvironments = listResponse.Items.filter(function (env) { return env.Name === environmentName; });
+                        matchingEnvironments = listResponse.Items.filter(function (env) { return env.Name.toLowerCase() === environmentName.toLowerCase(); });
                         if (matchingEnvironments.length > 1) {
                             throw (0, console_1.error)("Multiple environments found with the name '".concat(environmentName));
                         }
@@ -67462,7 +67462,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEphemeralEnvironmentFromInputs = createEphemeralEnvironmentFromInputs;
 exports.GetProjectByName = GetProjectByName;
 exports.GetExistingEnvironmentIdByName = GetExistingEnvironmentIdByName;
-exports.GetEnvironmentProjectState = GetEnvironmentProjectState;
+exports.GetEnvironmentProjectStatus = GetEnvironmentProjectStatus;
 const api_client_1 = __nccwpck_require__(1212);
 async function createEphemeralEnvironmentFromInputs(client, parameters, context) {
     client.info('🐙 Creating an ephemeral environment in Octopus Deploy...');
@@ -67498,7 +67498,7 @@ async function GetExistingEnvironmentIdByName(client, environmentName, spaceName
     }
     return null;
 }
-async function GetEnvironmentProjectState(client, environmentId, projectId, spaceName) {
+async function GetEnvironmentProjectStatus(client, environmentId, projectId, spaceName) {
     const environmentRepository = new api_client_1.EnvironmentRepository(client, spaceName);
     const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
     return projectStatus.Status;
@@ -67539,9 +67539,9 @@ async function createEnvironment(context) {
     else {
         context.info(`✅ Environment found - checking project connection`);
         const project = await (0, api_wrapper_1.GetProjectByName)(client, parameters.project, parameters.space, context);
-        const environmentProjectState = await (0, api_wrapper_1.GetEnvironmentProjectState)(client, environmentId, project.Id, parameters.space);
-        context.info(`🔗 Environment project state: ${environmentProjectState}`);
-        if (environmentProjectState == 'NotConnected') {
+        const environmentProjectStatus = await (0, api_wrapper_1.GetEnvironmentProjectStatus)(client, environmentId, project.Id, parameters.space);
+        context.info(`🔗 Environment project status: ${environmentProjectStatus}`);
+        if (environmentProjectStatus == 'NotConnected') {
             context.info(`🔌 Connecting existing ephemeral environment ${parameters.name} to project ${parameters.project}.`);
             await (0, api_wrapper_1.createEphemeralEnvironmentFromInputs)(client, parameters, context);
             context.info(`🔗 Connected existing environment ${parameters.name} to project ${parameters.project}`);
