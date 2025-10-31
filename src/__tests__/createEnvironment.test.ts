@@ -10,6 +10,8 @@ describe("createEnvironment", () => {
         projectId: "Projects-123",
         environmentName: "My Ephemeral Environment",
         environmentId: "Environments-123",
+        shortEnvironmentName: "My Ephemeral Env",
+        shortNameEnvironmentId: "Environments-124",
         spaceName: "Default",
         spaceId: "Spaces-1",
         apiKey: "API-XXXXXXXXXXXXXXXXXXXXXXXX"
@@ -84,6 +86,104 @@ describe("createEnvironment", () => {
     });
 
     describe("when environment already exists and is connected", () => {
+        test("should reuse existing environment", async () => {
+            const context = createTestContext();
+            
+            const server = setupServer(
+                ...createBaseHandlers(),
+                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
+                    return HttpResponse.json({
+                      Items: [
+                        {
+                          Name: testData.environmentName,
+                          Id: testData.environmentId,
+                        },
+                      ],
+                    });}),
+                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
+                    return HttpResponse.json({
+                            Status: 'NotProvisioned',
+                    });
+                })
+            );
+            server.listen();
+
+            await createEnvironment(context);
+            
+            expect(context.getStepSummary()).toEqual(
+                `🐙 Octopus Deploy reused the existing ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
+            );
+            
+            server.close();
+        });
+
+        test("should not care about environment name case", async () => {
+            const context = createTestContext();
+            
+            const server = setupServer(
+                ...createBaseHandlers(),
+                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
+                    return HttpResponse.json({
+                      Items: [
+                        {
+                          Name: testData.environmentName.toUpperCase,
+                          Id: testData.environmentId,
+                        },
+                      ],
+                    });}),
+                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
+                    return HttpResponse.json({
+                            Status: 'NotProvisioned',
+                    });
+                })
+            );
+            server.listen();
+
+            await createEnvironment(context);
+            
+            expect(context.getStepSummary()).toEqual(
+                `🐙 Octopus Deploy reused the existing ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
+            );
+            
+            server.close();
+        });
+
+        
+        test("should not match on partial environment name", async () => {
+            const context = createTestContext();
+            
+            const server = setupServer(
+                ...createBaseHandlers(),
+                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
+                    return HttpResponse.json({
+                      Items: [
+                         {
+                          Name: testData.shortEnvironmentName,
+                          Id: testData.shortNameEnvironmentId,
+                        },
+                        {
+                          Name: testData.environmentName,
+                          Id: testData.environmentId,
+                        },
+                      ],
+                    });}),
+                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
+                    return HttpResponse.json({
+                            Status: 'NotProvisioned',
+                    });
+                })
+            );
+            server.listen();
+
+            await createEnvironment(context);
+            
+            expect(context.getStepSummary()).toEqual(
+                `🐙 Octopus Deploy reused the existing ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
+            );
+            
+            server.close();
+        });
+
         test("should reuse existing environment", async () => {
             const context = createTestContext();
             

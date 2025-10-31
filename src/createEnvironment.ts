@@ -1,6 +1,6 @@
 import { getInputParameters } from './input-parameters';
 import { Client, ClientConfiguration } from '@octopusdeploy/api-client';
-import { createEphemeralEnvironmentFromInputs, GetEnvironmentProjectState, GetExistingEnvironmentIdByName, GetProjectByName } from './api-wrapper';
+import { createEphemeralEnvironmentFromInputs, GetEnvironmentProjectStatus, GetExistingEnvironmentIdByName, GetProjectByName } from './api-wrapper';
 import { ActionContext } from './ActionContext';
 
 export async function createEnvironment(context: ActionContext): Promise<void> {
@@ -31,10 +31,10 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
   } else {
     context.info(`✅ Environment found - checking project connection`);
     const project = await GetProjectByName(client, parameters.project, parameters.space, context);
-    const environmentProjectState = await GetEnvironmentProjectState(client, environmentId!, project.Id, parameters.space);
-    context.info(`🔗 Environment project state: ${environmentProjectState}`);
-    
-    if (environmentProjectState == 'NotConnected') {
+    const environmentProjectStatus = await GetEnvironmentProjectStatus(client, environmentId!, project.Id, parameters.space);
+    context.info(`🔗 Environment project status: ${environmentProjectStatus}`);
+
+    if (environmentProjectStatus == 'NotConnected') {
       context.info(`🔌 Connecting existing ephemeral environment ${parameters.name} to project ${parameters.project}.`);
       await createEphemeralEnvironmentFromInputs(client, parameters, context);
 

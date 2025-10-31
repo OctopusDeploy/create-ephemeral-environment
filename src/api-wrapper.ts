@@ -47,11 +47,10 @@ export async function GetExistingEnvironmentIdByName(client: Client, environment
     return existingEnvironment.Id;
   } 
 
-
   return null;
 }
 
-export async function GetEnvironmentProjectState(client: Client, environmentId: string, projectId: string, spaceName: string): Promise<string | null> {
+export async function GetEnvironmentProjectStatus(client: Client, environmentId: string, projectId: string, spaceName: string): Promise<string | null> {
   const environmentRepository = new EnvironmentRepository(client, spaceName);
   const projectStatus = await environmentRepository.getEphemeralEnvironmentProjectStatus(environmentId, projectId);
   
