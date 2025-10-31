@@ -26,25 +26,37 @@ describe("createEnvironment", () => {
     };
 
     const createBaseHandlers = (): ReturnType<typeof http.get>[] => [
-        http.get("https://my.octopus.app/api", () => {
-            return HttpResponse.json([{}]);
-        }),
-        http.get("https://my.octopus.app/api/spaces", () => {
-            return HttpResponse.json({
-                Items: [{
-                    Name: testData.spaceName,
-                    Id: testData.spaceId,
-                }]
-            });
-        }),
-        http.get("https://my.octopus.app/api/:spaceId/projects", () => {
-            return HttpResponse.json({
-                Items: [{
-                    Name: testData.projectName,
-                    Id: testData.projectId,
-                }]
-            });
-        })
+      http.get('https://my.octopus.app/api', () => {
+        return HttpResponse.json([{}]);
+      }),
+      http.get('https://my.octopus.app/api/spaces', () => {
+        return HttpResponse.json({
+          Items: [
+            {
+              Name: testData.spaceName,
+              Id: testData.spaceId,
+            },
+          ],
+        });
+      }),
+      http.get('https://my.octopus.app/api/:spaceId/projects', () => {
+        return HttpResponse.json({
+          Items: [
+            {
+              Name: testData.projectName,
+              Id: testData.projectId,
+            },
+          ],
+        });
+      }),
+      http.post(
+        'https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral',
+        () => {
+          return HttpResponse.json({
+            Id: testData.environmentId,
+          });
+        }
+      ),
     ];
 
     describe("when creating a new ephemeral environment", () => {
@@ -52,12 +64,12 @@ describe("createEnvironment", () => {
             const context = createTestContext();
             
             const server = setupServer(
-                ...createBaseHandlers(),
-                http.post("https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral", () => {
-                    return HttpResponse.json({
-                        Id: testData.environmentId,
-                    });
-                })
+              ...createBaseHandlers(),
+              http.get('https://my.octopus.app/api/:spaceId/environments/v2', () => {
+                return HttpResponse.json({
+                  Items: [],
+                });
+              })
             );
             server.listen();
 
@@ -72,7 +84,7 @@ describe("createEnvironment", () => {
     });
 
     describe("when environment already exists and is connected", () => {
-                test("should reuse existing environment", async () => {
+        test("should reuse existing environment", async () => {
             const context = createTestContext();
             
             const server = setupServer(
@@ -109,28 +121,32 @@ describe("createEnvironment", () => {
             const context = createTestContext();
             
              const server = setupServer(
-                ...createBaseHandlers(),
-                http.get("https://my.octopus.app/api/:spaceId/environments/v2", () => {
-                    return HttpResponse.json({
-                      Items: [
-                        {
-                          Name: testData.environmentName,
-                          Id: testData.environmentId,
-                        },
-                      ],
-                    });}),
-                http.get('https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status', () => {
-                    return HttpResponse.json({
-                            Status: 'NotConnected',
-                    });
-                })
-            );
+               ...createBaseHandlers(),
+               http.get('https://my.octopus.app/api/:spaceId/environments/v2', () => {
+                 return HttpResponse.json({
+                   Items: [
+                     {
+                       Name: testData.environmentName,
+                       Id: testData.environmentId,
+                     },
+                   ],
+                 });
+               }),
+               http.get(
+                 'https://my.octopus.app/api/:spaceId/projects/:projectId/environments/ephemeral/:id/status',
+                 () => {
+                   return HttpResponse.json({
+                     Status: 'NotConnected',
+                   });
+                 }
+               ),
+             );
             server.listen();
 
             await createEnvironment(context);
             
              expect(context.getStepSummary()).toEqual(
-                `🐙 Octopus Deploy created an ephemeral environment **${testData.environmentName}** for project **${testData.projectName}**.`
+                `🐙 Octopus Deploy connected ephemeral environment **${testData.environmentName}** to project **${testData.projectName}**.`
             );
             
             server.close();

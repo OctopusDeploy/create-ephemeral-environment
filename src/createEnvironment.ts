@@ -13,29 +13,31 @@ export async function createEnvironment(context: ActionContext): Promise<void> {
     accessToken: parameters.accessToken,
     logging: context,
   };
+  
   const client = await Client.create(config);
 
-    const environmentId = await GetExistingEnvironmentIdByName(client, parameters.name, parameters.space, context);
-    if (!environmentId) {
+  const environmentId = await GetExistingEnvironmentIdByName(client, parameters.name, parameters.space, context);
+  if (!environmentId) {
+    await createEphemeralEnvironmentFromInputs(client, parameters, context);
+    context.writeStepSummary(
+      `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
+    );
+    return;
+  } else {
+    const project = await GetProjectByName(client, parameters.project, parameters.space, context);
+    const environmentProjectState = await GetEnvironmentProjectState(client, environmentId!, project.Id, parameters.space, context);
+    
+    if (environmentProjectState == 'NotConnected') {
       await createEphemeralEnvironmentFromInputs(client, parameters, context);
       context.writeStepSummary(
-        `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
+        `🐙 Octopus Deploy connected ephemeral environment **${parameters.name}** to project **${parameters.project}**.`
       );
       return;
-    } else {
-      const project = await GetProjectByName(client, parameters.project, parameters.space, context);
-      const environmentProjectState = await GetEnvironmentProjectState(client, environmentId!, project.Id, parameters.space, context);
-      if (environmentProjectState == "NotConnected ") {
-        await createEphemeralEnvironmentFromInputs(client, parameters, context);
-        context.writeStepSummary(
-          `🐙 Octopus Deploy created an ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
-        );
-        return;
     } else {
       context.writeStepSummary(
         `🐙 Octopus Deploy reused the existing ephemeral environment **${parameters.name}** for project **${parameters.project}**.`
       );
-        return;
-      }
+      return;
     }
   }
+}
