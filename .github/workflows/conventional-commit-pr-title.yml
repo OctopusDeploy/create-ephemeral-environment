@@ -6,11 +6,13 @@ on:
       - edited
       - reopened
       - synchronize
+  workflow_dispatch:
 
 jobs:
   main:
     name: Validate PR title
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
     permissions:
       pull-requests: read
     steps:
