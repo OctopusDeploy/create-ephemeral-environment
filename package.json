@@ -1,6 +1,6 @@
 {
   "name": "create-ephemeral-environment",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GitHub Action to create an ephemeral environment in Octopus Deploy",
   "main": "dist/index.js",
   "scripts": {
