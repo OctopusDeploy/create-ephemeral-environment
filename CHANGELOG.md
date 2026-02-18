@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.0.0...v1.1.0) (2026-02-18)
+
+
+### Features
+
+* Add workflow to check for conventional commit format PR title ([#40](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/40)) ([8421ece](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/8421ece49b645eb472025a96d2c0dbdee7f05254))
+
 ## 1.0.0 (2025-11-07)
 
 
