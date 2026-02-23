@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/jest": "29.5.14",
     "@types/lodash": "4.17.23",
-    "@types/node": "24.8.1",
+    "@types/node": "24.10.13",
     "@typescript-eslint/eslint-plugin": "8.56.0",
     "@typescript-eslint/parser": "8.56.0",
     "@vercel/ncc": "0.38.4",
