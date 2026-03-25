@@ -1,11 +1,12 @@
 {
-    "extends": "./tsconfig.base.json",
+    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ES2022",
         "esModuleInterop": true,
         "module": "CommonJS",
+        "moduleResolution": "node",
         "lib": [
-            "es2015"
+            "es2022"
         ],
         "strict": true,
         "allowJs": true
