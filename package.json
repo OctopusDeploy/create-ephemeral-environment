@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "@actions/core": "3.0.0",
-    "@actions/github": "6.0.1",
     "@octopusdeploy/api-client": "3.10.2"
   }
 }
