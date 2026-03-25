@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.0...v1.1.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* **deps:** Remove actions core ([#79](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/79)) ([fe0efe9](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/fe0efe95ecdc296efde69d06d2a74a51500884a5))
+
 ## [1.1.0](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.0.0...v1.1.0) (2026-03-25)
 
 
