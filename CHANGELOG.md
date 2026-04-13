@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.1...v1.1.2) (2026-04-13)
+
+
+### Bug Fixes
+
+* **deps:** bump axios from 1.13.5 to 1.15.0 ([#94](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/94)) ([ba91f95](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/ba91f95d55f4a2529ced6eb16ca6b75a9f64118b))
+
 ## [1.1.1](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.0...v1.1.1) (2026-03-25)
 
 
