@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.2...v1.1.3) (2026-05-12)
+
+
+### Bug Fixes
+
+* patch transitive axios vulnerability via npm audit fix ([#104](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/104)) ([05cb99e](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/05cb99e39510d1570e0abb5e72deeb97b8005f3f))
+
 ## [1.1.2](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.1...v1.1.2) (2026-04-13)
 
 
