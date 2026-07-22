@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.4](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.3...v1.1.4) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump @octopusdeploy/api-client to 3.11.5 ([#122](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/122)) ([227f177](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/227f177594f4914e2aaa8333a1e0a284616bee15))
+* **deps:** bump @octopusdeploy/api-client to 3.11.6 ([#125](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/125)) ([59d43c7](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/59d43c73f5c93f1ab0a4f7365dbe27e23c6c0a40))
+* **deps:** bump undici from 6.24.1 to 6.27.0 ([#115](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/115)) ([ece5d2d](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/ece5d2dc4f2bc07b493ff92aedb21cfd65639670))
+* **deps:** update js-yaml to resolve DoS advisory ([#126](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/126)) ([b295db5](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/b295db5b8af62f5c7ee237c0e8d23026d0e9677d))
+
 ## [1.1.3](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.2...v1.1.3) (2026-06-08)
 
 
