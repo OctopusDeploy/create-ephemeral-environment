@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.5](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.4...v1.1.5) (2026-08-11)
+
+
+### Bug Fixes
+
+* **deps:** bump brace-expansion override to resolve DoS bypass ([#135](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/135)) ([67c7bb3](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/67c7bb335d50b3d3125187d39290d048c50d9bbf))
+* **deps:** bump brace-expansion to resolve DoS advisory ([#127](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/127)) ([8974ee0](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/8974ee019c3ceb83baeb7673e1e294bc66ea970b))
+* **deps:** Fix npm audit vulnerabilities ([#136](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/136)) ([bbedabd](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/bbedabdd9f8620417ba9c23c468f5b6d46e595e0))
+* **deps:** resolve new brace-expansion and js-yaml advisories ([#131](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/131)) ([118ade1](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/118ade1b153475a0eb77293074fb1130976d8367))
+* **deps:** resolve remaining npm audit advisories ([#129](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/129)) ([7ff302f](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/7ff302fa1c55df0e934a7bd94dfd9663cfb774c2))
+
 ## [1.1.4](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.3...v1.1.4) (2026-07-22)
 
 
