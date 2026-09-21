@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.5...v1.1.6) (2026-09-21)
+
+
+### Bug Fixes
+
+* **deps:** resolve npm audit advisories ([#141](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/141)) ([81652bd](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/81652bdacd40a00883052f85870463ac284c3249))
+
 ## [1.1.5](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.4...v1.1.5) (2026-09-09)
 
 
