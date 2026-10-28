@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.9](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.8...v1.1.9) (2026-10-28)
+
+
+### Bug Fixes
+
+* **deps:** bump undici from 6.29.0 to 6.29.1 ([#162](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/162)) ([8b637ac](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/8b637ac698be2033e24922339038b098ab000036))
+
 ## [1.1.8](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.7...v1.1.8) (2026-10-20)
 
 
