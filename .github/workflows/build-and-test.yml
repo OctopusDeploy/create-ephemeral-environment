@@ -19,10 +19,10 @@ jobs:
       checks: write
       statuses: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup node 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: 24.13.1
 
@@ -58,7 +58,7 @@ jobs:
 
       # If index.js was different from expected, upload the expected version as an artifact
       - name: Upload dist as artifact if differences detected
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
           name: dist
