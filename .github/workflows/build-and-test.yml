@@ -39,7 +39,7 @@ jobs:
         run: npm run test
 
       - name: Create test report
-        uses: phoenix-actions/test-reporting@41efe7ebebe7ef156ef46f6b0acf50ec0f10315b # v12
+        uses: phoenix-actions/test-reporting@7317eea6e13c47348dd0bb318669485157c518d6 # v16
         if: success() || failure() # run this step even if previous step failed
         with:
           name: Tests # Name of the check run which will be created
