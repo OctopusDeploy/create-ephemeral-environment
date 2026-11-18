@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.10](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.9...v1.1.10) (2026-11-18)
+
+
+### Bug Fixes
+
+* **deps:** bump follow-redirects from 1.16.1 to 1.16.2 ([#166](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/166)) ([5762ee5](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/5762ee52474f2020fc14fe2a9593cd3ddba50312))
+* **deps:** update dependency @actions/core to v3.0.1 ([#101](https://github.com/OctopusDeploy/create-ephemeral-environment/issues/101)) ([fa88dc4](https://github.com/OctopusDeploy/create-ephemeral-environment/commit/fa88dc4034a22df9ed16777295173f31ba47ce82))
+
 ## [1.1.9](https://github.com/OctopusDeploy/create-ephemeral-environment/compare/v1.1.8...v1.1.9) (2026-10-28)
 
 
