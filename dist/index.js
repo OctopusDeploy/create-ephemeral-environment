@@ -23608,14 +23608,14 @@ var require_commonjs2 = __commonJS({
   "node_modules/brace-expansion/dist/commonjs/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.EXPANSION_MAX_REWRITES = exports2.EXPANSION_MAX_DEPTH = exports2.EXPANSION_MAX_LENGTH = exports2.EXPANSION_MAX = void 0;
+    exports2.EXPANSION_MAX_STEPS = exports2.EXPANSION_MAX_REWRITES = exports2.EXPANSION_MAX_DEPTH = exports2.EXPANSION_MAX_LENGTH = exports2.EXPANSION_MAX = void 0;
     exports2.expand = expand;
     var balanced_match_1 = require_commonjs();
-    var escSlash = "\0SLASH" + Math.random() + "\0";
-    var escOpen = "\0OPEN" + Math.random() + "\0";
-    var escClose = "\0CLOSE" + Math.random() + "\0";
-    var escComma = "\0COMMA" + Math.random() + "\0";
-    var escPeriod = "\0PERIOD" + Math.random() + "\0";
+    var escSlash = "\0SLASH" + Math.random().toFixed(16) + "\0";
+    var escOpen = "\0OPEN" + Math.random().toFixed(16) + "\0";
+    var escClose = "\0CLOSE" + Math.random().toFixed(16) + "\0";
+    var escComma = "\0COMMA" + Math.random().toFixed(16) + "\0";
+    var escPeriod = "\0PERIOD" + Math.random().toFixed(16) + "\0";
     var escSlashPattern = new RegExp(escSlash, "g");
     var escOpenPattern = new RegExp(escOpen, "g");
     var escClosePattern = new RegExp(escClose, "g");
@@ -23630,6 +23630,8 @@ var require_commonjs2 = __commonJS({
     exports2.EXPANSION_MAX_LENGTH = 4e6;
     exports2.EXPANSION_MAX_DEPTH = 1e3;
     exports2.EXPANSION_MAX_REWRITES = 1e3;
+    exports2.EXPANSION_MAX_STEPS = 2e7;
+    var CALL_STEPS = 16;
     function numeric(str) {
       return !isNaN(str) ? parseInt(str, 10) : str.charCodeAt(0);
     }
@@ -23644,11 +23646,70 @@ var require_commonjs2 = __commonJS({
         target.push(items[i]);
       }
     }
-    function parseCommaParts(str) {
+    function balancedWithBudget(str, masked, budget) {
+      if (budget.remaining < 0) {
+        return void 0;
+      }
+      const r = (0, balanced_match_1.range)("{", "}", masked);
+      const unmatched = r !== void 0 && masked.indexOf("{") < r[0];
+      budget.remaining -= r && !unmatched ? r[1] + 1 : str.length;
+      if (!r || budget.remaining < 0) {
+        return void 0;
+      }
+      return {
+        end: r[1],
+        pre: str.slice(0, r[0]),
+        body: str.slice(r[0] + 1, r[1]),
+        post: str.slice(r[1] + 1),
+        unmatched
+      };
+    }
+    function maskUnmatchedOpens(masked, budget) {
+      budget.remaining -= masked.length;
+      const open2 = [];
+      for (let i = 0; i < masked.length; i++) {
+        const c = masked.charCodeAt(i);
+        if (c === 123) {
+          open2.push(i);
+        } else if (c === 125 && open2.length) {
+          open2.pop();
+        }
+      }
+      let out = "";
+      let last = 0;
+      for (let i = 0; i < open2.length; i++) {
+        const at = open2[i];
+        out += masked.slice(last, at) + "\0";
+        last = at + 1;
+      }
+      return out + masked.slice(last);
+    }
+    function commaSetFollows(str, budget) {
+      budget.remaining -= str.length;
+      if (budget.remaining < 0) {
+        return false;
+      }
+      let close = false;
+      for (let i = str.length - 1; i >= 0; i--) {
+        const c = str.charCodeAt(i);
+        if (c === 125) {
+          close = true;
+        } else if (c === 10 || c === 13 || c === 8232 || c === 8233) {
+          close = false;
+        } else if (c === 44 && close && str.charCodeAt(i + 1) !== 44) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function parseCommaParts(str, budget) {
       const parts = [];
       let carry = "";
       for (; ; ) {
-        const m = (0, balanced_match_1.balanced)("{", "}", str);
+        const m = balancedWithBudget(str, str, budget);
+        if (budget.remaining < 0) {
+          return void 0;
+        }
         if (!m) {
           const tail = str.split(",");
           tail[0] = carry + tail[0];
@@ -23668,15 +23729,22 @@ var require_commonjs2 = __commonJS({
         str = post;
       }
     }
+    function bound(value, fallback) {
+      return value === void 0 || isNaN(value) ? fallback : value;
+    }
     function expand(str, options = {}) {
       if (!str) {
         return [];
       }
-      const { max = exports2.EXPANSION_MAX, maxLength = exports2.EXPANSION_MAX_LENGTH, maxDepth = exports2.EXPANSION_MAX_DEPTH, maxRewrites = exports2.EXPANSION_MAX_REWRITES } = options;
+      const max = bound(options.max, exports2.EXPANSION_MAX);
+      const maxLength = bound(options.maxLength, exports2.EXPANSION_MAX_LENGTH);
+      const maxDepth = bound(options.maxDepth, exports2.EXPANSION_MAX_DEPTH);
+      const maxRewrites = bound(options.maxRewrites, exports2.EXPANSION_MAX_REWRITES);
+      const maxSteps = bound(options.maxSteps, exports2.EXPANSION_MAX_STEPS);
       if (str.slice(0, 2) === "{}") {
         str = "\\{\\}" + str.slice(2);
       }
-      return expand_(escapeBraces(str), max, maxLength, maxDepth, 0, maxRewrites, true).map(unescapeBraces);
+      return expand_(escapeBraces(str), max, maxLength, maxDepth, 0, maxRewrites, { remaining: maxSteps }, true).map(unescapeBraces);
     }
     function embrace(str) {
       return "{" + str + "}";
@@ -23690,25 +23758,32 @@ var require_commonjs2 = __commonJS({
     function gte(i, y) {
       return i >= y;
     }
-    function combine(acc, pre, values, max, maxLength, dropEmpties) {
+    function combine(acc, pre, values, max, maxLength, dropEmpties, budget) {
       const out = [];
       let length = 0;
-      for (let a = 0; a < acc.length; a++) {
-        for (let v = 0; v < values.length; v++) {
+      let nonEmpty;
+      outer: for (let a = 0; a < acc.length; a++) {
+        const prefix = acc[a] + pre;
+        let vs = values;
+        if (dropEmpties && !prefix) {
+          if (!nonEmpty)
+            nonEmpty = values.filter((v) => v);
+          vs = nonEmpty;
+        }
+        for (let v = 0; v < vs.length; v++) {
           if (out.length >= max)
-            return out;
-          const expansion = acc[a] + pre + values[v];
-          if (dropEmpties && !expansion)
-            continue;
+            break outer;
+          const expansion = prefix + vs[v];
           if (length + expansion.length > maxLength)
-            return out;
+            break outer;
           out.push(expansion);
           length += expansion.length;
         }
       }
+      budget.remaining -= out.length;
       return out;
     }
-    function expandSequence(body, isAlphaSequence, max, maxLength) {
+    function expandSequence(body, isAlphaSequence, max, maxLength, budget) {
       const n = body.split(/\.\./);
       const N = [];
       if (n[0] === void 0 || n[1] === void 0) {
@@ -23725,8 +23800,13 @@ var require_commonjs2 = __commonJS({
         test = gte;
       }
       const pad = n.some(isPadded);
+      const cost = pad ? width : 1;
       let length = 0;
       for (let i = x; test(i, y) && N.length < max; i += incr) {
+        budget.remaining -= cost;
+        if (budget.remaining < 0) {
+          return void 0;
+        }
         let c;
         if (isAlphaSequence) {
           c = String.fromCharCode(i);
@@ -23754,7 +23834,8 @@ var require_commonjs2 = __commonJS({
       }
       return N;
     }
-    function expand_(str, max, maxLength, maxDepth, depth, maxRewrites, isTop) {
+    function expand_(str, max, maxLength, maxDepth, depth, maxRewrites, budget, isTop) {
+      budget.remaining -= CALL_STEPS;
       if (depth > maxDepth) {
         return [str];
       }
@@ -23762,18 +23843,24 @@ var require_commonjs2 = __commonJS({
       let rewrites = 0;
       let dropEmpties = false;
       let firstGroup = true;
+      let masked = str;
       for (; ; ) {
-        const m = (0, balanced_match_1.balanced)("{", "}", str);
+        const m = balancedWithBudget(str, masked, budget);
         if (!m) {
-          return combine(acc, str, [""], max, maxLength, dropEmpties);
+          return combine(acc, str, [""], max, maxLength, dropEmpties, budget);
+        }
+        if (m.unmatched) {
+          masked = maskUnmatchedOpens(masked, budget);
         }
         const pre = m.pre;
+        const literal = () => combine(acc, pre + "{" + m.body + "}" + m.post, [""], max, maxLength, dropEmpties, budget);
         if (/\$$/.test(pre)) {
-          acc = combine(acc, pre + "{" + m.body + "}", [""], max, maxLength, dropEmpties && !m.post.length);
+          acc = combine(acc, pre + "{" + m.body + "}", [""], max, maxLength, dropEmpties && !m.post.length, budget);
           firstGroup = false;
           if (!m.post.length)
             break;
           str = m.post;
+          masked = masked.slice(m.end + 1);
           continue;
         }
         const isNumericSequence = /^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(m.body);
@@ -23781,13 +23868,14 @@ var require_commonjs2 = __commonJS({
         const isSequence = isNumericSequence || isAlphaSequence;
         const isOptions = m.body.indexOf(",") >= 0;
         if (!isSequence && !isOptions) {
-          if (rewrites < maxRewrites && m.post.match(/,(?!,).*\}/)) {
+          if (rewrites < maxRewrites && commaSetFollows(m.post, budget)) {
             rewrites++;
             str = m.pre + "{" + m.body + escClose + m.post;
+            masked = masked.slice(0, m.end) + escClose + masked.slice(m.end + 1);
             isTop = true;
             continue;
           }
-          return combine(acc, pre + "{" + m.body + "}" + m.post, [""], max, maxLength, dropEmpties);
+          return literal();
         }
         if (firstGroup) {
           dropEmpties = isTop && !isSequence;
@@ -23795,16 +23883,30 @@ var require_commonjs2 = __commonJS({
         }
         let values;
         if (isSequence) {
-          values = expandSequence(m.body, isAlphaSequence, max, maxLength);
+          values = expandSequence(m.body, isAlphaSequence, max, maxLength, budget);
+          if (!values) {
+            return literal();
+          }
         } else {
-          let n = parseCommaParts(m.body);
+          let n = parseCommaParts(m.body, budget);
+          if (!n) {
+            return literal();
+          }
           if (n.length === 1 && n[0] !== void 0) {
-            n = expand_(n[0], max, maxLength, maxDepth, depth + 1, maxRewrites, false).map(embrace);
+            n = expand_(n[0], max, maxLength, maxDepth, depth + 1, maxRewrites, budget, false).map(embrace);
+            if (budget.remaining < 0) {
+              return literal();
+            }
             if (n.length === 1) {
-              acc = combine(acc, pre + n[0], [""], max, maxLength, dropEmpties && !m.post.length);
+              const next2 = combine(acc, pre + n[0], [""], max, maxLength, dropEmpties && !m.post.length, budget);
+              if (budget.remaining < 0) {
+                return literal();
+              }
+              acc = next2;
               if (!m.post.length)
                 break;
               str = m.post;
+              masked = masked.slice(m.end + 1);
               continue;
             }
           }
@@ -23817,7 +23919,10 @@ var require_commonjs2 = __commonJS({
           values = [];
           let valuesLength = 0;
           outer: for (let j = 0; j < n.length; j++) {
-            const expanded = expand_(n[j], max, maxLength, maxDepth, depth + 1, maxRewrites, false);
+            const expanded = expand_(n[j], max, maxLength, maxDepth, depth + 1, maxRewrites, budget, false);
+            if (budget.remaining < 0) {
+              return literal();
+            }
             for (let k = 0; k < expanded.length; k++) {
               const v = expanded[k];
               if (dropsEmpties && !v)
@@ -23830,10 +23935,15 @@ var require_commonjs2 = __commonJS({
             }
           }
         }
-        acc = combine(acc, pre, values, max, maxLength, dropEmpties && !m.post.length);
+        const next = combine(acc, pre, values, max, maxLength, dropEmpties && !m.post.length, budget);
+        if (budget.remaining < 0) {
+          return literal();
+        }
+        acc = next;
         if (!m.post.length)
           break;
         str = m.post;
+        masked = masked.slice(m.end + 1);
       }
       return acc;
     }
