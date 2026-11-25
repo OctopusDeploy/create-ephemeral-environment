@@ -23610,6 +23610,7 @@ var require_commonjs2 = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.EXPANSION_MAX_STEPS = exports2.EXPANSION_MAX_REWRITES = exports2.EXPANSION_MAX_DEPTH = exports2.EXPANSION_MAX_LENGTH = exports2.EXPANSION_MAX = void 0;
     exports2.expand = expand;
+    exports2.default = expand;
     var balanced_match_1 = require_commonjs();
     var escSlash = "\0SLASH" + Math.random().toFixed(16) + "\0";
     var escOpen = "\0OPEN" + Math.random().toFixed(16) + "\0";
