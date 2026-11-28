@@ -59359,6 +59359,117 @@ var require_createRequestHeaders = __commonJS({
   }
 });
 
+// node_modules/@octopusdeploy/api-client/dist/aiAgent.js
+var require_aiAgent = __commonJS({
+  "node_modules/@octopusdeploy/api-client/dist/aiAgent.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.getAiAgentUserAgentToken = void 0;
+    var aiAgentVariable = "AI_AGENT";
+    var otherAgentName = "Other";
+    var knownAgents = [
+      { name: "ClaudeCode", aiAgentPrefix: "claude-code", variables: [{ variable: "CLAUDECODE" }, { variable: "CLAUDE_CODE_ENTRYPOINT" }] },
+      { name: "Cursor", aiAgentPrefix: "cursor", variables: [{ variable: "CURSOR_AGENT" }, { variable: "CURSOR_EXTENSION_HOST_ROLE", value: "agent-exec" }] },
+      { name: "Codex", aiAgentPrefix: "codex", variables: [{ variable: "CODEX_SANDBOX" }, { variable: "CODEX_THREAD_ID" }, { variable: "CODEX_CI" }] },
+      { name: "GeminiCLI", aiAgentPrefix: "gemini", variables: [{ variable: "GEMINI_CLI" }] },
+      {
+        name: "GitHubCopilot",
+        aiAgentPrefix: "github-copilot",
+        variables: [{ variable: "COPILOT_CLI" }, { variable: "COPILOT_AGENT" }, { variable: "GITHUB_COPILOT_CLI_MODE" }]
+      },
+      {
+        name: "OpenCode",
+        aiAgentPrefix: "opencode",
+        variables: [{ variable: "OPENCODE", value: "1" }, { variable: "OPENCODE_CLIENT" }, { variable: "OPENCODE_AI" }]
+      },
+      { name: "Antigravity", aiAgentPrefix: "antigravity", variables: [{ variable: "ANTIGRAVITY_AGENT" }] },
+      { name: "Goose", aiAgentPrefix: "goose", variables: [{ variable: "GOOSE_TERMINAL" }, { variable: "AGENT", value: "goose" }] },
+      { name: "Amp", aiAgentPrefix: "amp", variables: [{ variable: "AGENT", value: "amp" }] },
+      { name: "Cline", aiAgentPrefix: "cline", variables: [{ variable: "CLINE_ACTIVE" }, { variable: "CLINE_TASK_ID" }] },
+      { name: "RooCode", variables: [{ variable: "ROO_CODE_TASK_ID" }] },
+      { name: "Augment", aiAgentPrefix: "augment", variables: [{ variable: "AUGMENT_AGENT" }] },
+      { name: "QwenCode", variables: [{ variable: "QWEN_CODE" }] },
+      { name: "FactoryDroid", variables: [{ variable: "DROID_CLI" }] },
+      { name: "KimiCLI", variables: [{ variable: "KIMI_CLI" }] },
+      { name: "Trae", variables: [{ variable: "TRAE_AI_SHELL_ID" }] },
+      { name: "Aider", variables: [{ variable: "OR_APP_NAME", value: "Aider" }] },
+      { name: "OpenHands", variables: [{ variable: "OR_APP_NAME", value: "OpenHands" }] },
+      { name: "Devin", aiAgentPrefix: "devin" },
+      { name: "Replit", aiAgentPrefix: "replit" },
+      { name: "V0", aiAgentPrefix: "v0" }
+    ];
+    function getAiAgentUserAgentToken(callerSuppliedAgent, env) {
+      var _a;
+      try {
+        var variables = env !== null && env !== void 0 ? env : readProcessEnvironment();
+        var aiAgentNameFromEnvVar = variables[aiAgentVariable];
+        var selfReported = [callerSuppliedAgent, aiAgentNameFromEnvVar].map(function(value) {
+          return typeof value === "string" ? value.trim() : void 0;
+        }).filter(function(value) {
+          return !!value;
+        });
+        var agent = (_a = selfReported.map(findAgentByPrefix).find(function(a) {
+          return a !== void 0;
+        })) !== null && _a !== void 0 ? _a : findAgentByVariables(variables);
+        if (agent) {
+          return aiAgentComment(agent.name);
+        }
+        return selfReported.length > 0 ? aiAgentComment(otherAgentName) : void 0;
+      } catch (_b) {
+        return void 0;
+      }
+    }
+    exports2.getAiAgentUserAgentToken = getAiAgentUserAgentToken;
+    function aiAgentComment(name) {
+      return "(ai-agent=".concat(name, ")");
+    }
+    function findAgentByPrefix(identifier) {
+      var normalised = identifier.toLowerCase().replace(/[_\s]+/g, "-");
+      return knownAgents.find(function(agent) {
+        return agent.aiAgentPrefix !== void 0 && matchesPrefix(normalised, agent.aiAgentPrefix);
+      });
+    }
+    function matchesPrefix(identifier, prefix) {
+      if (!identifier.startsWith(prefix)) {
+        return false;
+      }
+      var next = identifier.charAt(prefix.length);
+      return next === "" || /^[-@.0-9]$/.test(next);
+    }
+    function findAgentByVariables(env) {
+      return knownAgents.find(function(agent) {
+        var _a;
+        return ((_a = agent.variables) !== null && _a !== void 0 ? _a : []).some(function(rule) {
+          var value = env[rule.variable];
+          if (!value) {
+            return false;
+          }
+          return rule.value === void 0 || value.toLowerCase() === rule.value.toLowerCase();
+        });
+      });
+    }
+    function readProcessEnvironment() {
+      return typeof process !== "undefined" && process.env ? process.env : {};
+    }
+  }
+});
+
+// node_modules/@octopusdeploy/api-client/dist/adapters/createUserAgent.js
+var require_createUserAgent = __commonJS({
+  "node_modules/@octopusdeploy/api-client/dist/adapters/createUserAgent.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.createUserAgent = void 0;
+    var aiAgent_1 = require_aiAgent();
+    function createUserAgent(configuration, env) {
+      return ["ts-octopusdeploy", configuration.userAgentApp, (0, aiAgent_1.getAiAgentUserAgentToken)(configuration.aiAgent, env)].filter(function(part) {
+        return !!part;
+      }).join(" ");
+    }
+    exports2.createUserAgent = createUserAgent;
+  }
+});
+
 // node_modules/@octopusdeploy/api-client/dist/adapters/axiosAdapter.js
 var require_axiosAdapter = __commonJS({
   "node_modules/@octopusdeploy/api-client/dist/adapters/axiosAdapter.js"(exports2) {
@@ -59467,6 +59578,7 @@ var require_axiosAdapter = __commonJS({
     var axios_1 = __importDefault(require_axios());
     var adapter_1 = require_adapter();
     var createRequestHeaders_1 = require_createRequestHeaders();
+    var createUserAgent_1 = require_createUserAgent();
     var AxiosAdapter = (
       /** @class */
       (function() {
@@ -59488,7 +59600,7 @@ var require_axiosAdapter = __commonJS({
               }
               return message;
             }
-            var config, userAgent, response, error_1;
+            var config, response, error_1;
             return __generator(this, function(_b) {
               switch (_b.label) {
                 case 0:
@@ -59506,11 +59618,7 @@ var require_axiosAdapter = __commonJS({
                   };
                   if (typeof XMLHttpRequest === "undefined") {
                     if (config.headers) {
-                      userAgent = "ts-octopusdeploy";
-                      if (options.configuration.userAgentApp) {
-                        userAgent = "".concat(userAgent, " ").concat(options.configuration.userAgentApp);
-                      }
-                      config.headers["User-Agent"] = userAgent;
+                      config.headers["User-Agent"] = (0, createUserAgent_1.createUserAgent)(options.configuration);
                     }
                   }
                   return [4, axios_1.default.request(config)];

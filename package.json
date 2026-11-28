@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@actions/core": "3.0.1",
-    "@octopusdeploy/api-client": "3.11.6"
+    "@octopusdeploy/api-client": "3.11.7"
   },
   "overrides": {
     "brace-expansion": "5.0.13"
